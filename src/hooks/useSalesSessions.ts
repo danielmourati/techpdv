@@ -6,9 +6,9 @@ let nextNumber = 10;
 
 export function useSalesSessions() {
   const [sessions, setSessions] = useState<SaleSession[]>(MOCK_SESSIONS);
-  const [activeId, setActiveId] = useState<string>(MOCK_SESSIONS[1].id);
+  const [activeId, setActiveId] = useState<string>(MOCK_SESSIONS[1]?.id ?? "s7");
   const [currentItemId, setCurrentItemId] = useState<string | null>(
-    MOCK_SESSIONS[1].items[0]?.id ?? null,
+    MOCK_SESSIONS[1]?.items[0]?.id ?? null,
   );
 
   const active = useMemo(
