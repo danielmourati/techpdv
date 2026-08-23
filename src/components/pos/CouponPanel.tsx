@@ -1,10 +1,9 @@
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Banknote, CheckCircle2, Minus, Plus, QrCode, Receipt, Trash2 } from "lucide-react";
+import productPlaceholder from "@/assets/product-placeholder.jpg";
 import type { SaleItem } from "@/data/mock-sales";
 import { brl, qty } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Panel } from "./Panel";
-import { KeyHint } from "./KeyHint";
 
 export function CouponPanel({
   items,
@@ -13,7 +12,10 @@ export function CouponPanel({
   onChangeQuantity,
   onRemove,
   onSelect,
+  onClear,
   onFinish,
+  onCash,
+  onPix,
 }: {
   items: SaleItem[];
   total: number;
@@ -21,22 +23,48 @@ export function CouponPanel({
   onChangeQuantity: (id: string, delta: number) => void;
   onRemove: (id: string) => void;
   onSelect: (id: string) => void;
+  onClear: () => void;
   onFinish: () => void;
+  onCash: () => void;
+  onPix: () => void;
 }) {
   return (
-    <Panel
-      title="Cupom da venda"
-      className="h-full"
-      bodyClassName="min-h-0"
-      action={
-        <span className="num shrink-0 font-display text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground/80">
-          {items.length} {items.length === 1 ? "item" : "itens"}
+    <section className="grid min-h-0 grid-rows-[auto_auto_minmax(0,1fr)_auto] overflow-hidden rounded-md border border-border bg-card">
+      <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border px-3 py-2">
+        <span className="grid size-10 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
+          <Receipt className="size-5" />
         </span>
-      }
-    >
-      <ul className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">
+        <div className="min-w-0">
+          <p className="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-primary">
+            Cupom da venda
+          </p>
+          <p className="num truncate font-display text-lg font-bold leading-tight">
+            {items.length} produto(s)
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          aria-label="Limpar cupom"
+          onClick={onClear}
+          className="size-9 shrink-0 rounded-md border-destructive/30 bg-destructive/10 text-destructive"
+        >
+          <Trash2 className="size-4" />
+        </Button>
+      </header>
+
+      <div className="grid grid-cols-[minmax(0,1fr)_5.5rem_4.5rem_5rem_2rem] items-center gap-2 border-b border-border px-3 py-2 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+        <span>Produto</span>
+        <span className="text-center">Qtd.</span>
+        <span className="text-right">Unit.</span>
+        <span className="text-right">Total</span>
+        <span className="sr-only">Ações</span>
+      </div>
+
+      <ul className="min-h-0 divide-y divide-border overflow-y-auto">
         {items.length === 0 && (
-          <li className="px-3 py-6 text-center text-sm text-muted-foreground">
+          <li className="px-3 py-8 text-center text-sm text-muted-foreground">
             Nenhum item no cupom.
           </li>
         )}
@@ -45,88 +73,132 @@ export function CouponPanel({
             key={item.id}
             onClick={() => onSelect(item.id)}
             className={cn(
-              "cursor-pointer px-3 py-2",
-              item.id === currentItemId ? "bg-accent/60" : "hover:bg-surface",
+              "grid cursor-pointer grid-cols-[minmax(0,1fr)_5.5rem_4.5rem_5rem_2rem] items-center gap-2 px-3 py-2",
+              item.id === currentItemId ? "bg-primary/5" : "hover:bg-surface",
             )}
           >
-            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
-              <p className="min-w-0 truncate font-display text-sm font-semibold uppercase">
-                {item.name}
-              </p>
-              <p className="num shrink-0 text-sm font-bold">{brl(item.price * item.quantity)}</p>
-            </div>
-            <div className="mt-1 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
-              <div className="flex shrink-0 items-center gap-1">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="outline"
-                  aria-label={`Diminuir quantidade de ${item.name}`}
-                  className="size-7 rounded-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onChangeQuantity(item.id, -1);
-                  }}
-                >
-                  <Minus className="size-3.5" />
-                </Button>
-                <span className="num w-10 text-center text-sm font-semibold">
-                  {qty(item.quantity)}
-                </span>
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="outline"
-                  aria-label={`Aumentar quantidade de ${item.name}`}
-                  className="size-7 rounded-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onChangeQuantity(item.id, 1);
-                  }}
-                >
-                  <Plus className="size-3.5" />
-                </Button>
+            <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2">
+              <img
+                src={productPlaceholder}
+                alt=""
+                aria-hidden
+                className="size-9 shrink-0 rounded-sm object-contain"
+                loading="lazy"
+              />
+              <div className="min-w-0">
+                <p className="truncate font-display text-sm font-bold uppercase text-primary">
+                  {item.name}
+                </p>
+                <p className="num truncate text-[11px] text-muted-foreground">{item.code}</p>
               </div>
-              <span className="num min-w-0 truncate text-xs text-muted-foreground">
-                {item.unit} × {brl(item.price)}
+            </div>
+
+            <div className="flex items-center justify-center gap-1">
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                aria-label={`Diminuir quantidade de ${item.name}`}
+                className="size-6 shrink-0 rounded-md"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChangeQuantity(item.id, -1);
+                }}
+              >
+                <Minus className="size-3" />
+              </Button>
+              <span className="num w-8 rounded-md border border-border py-0.5 text-center text-xs font-bold">
+                {qty(item.quantity)}
               </span>
               <Button
                 type="button"
                 size="icon"
-                variant="ghost"
-                aria-label={`Remover ${item.name}`}
-                className="size-7 shrink-0 rounded-sm text-destructive hover:text-destructive"
+                variant="outline"
+                aria-label={`Aumentar quantidade de ${item.name}`}
+                className="size-6 shrink-0 rounded-md"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onRemove(item.id);
+                  onChangeQuantity(item.id, 1);
                 }}
               >
-                <Trash2 className="size-3.5" />
+                <Plus className="size-3" />
               </Button>
             </div>
+
+            <span className="num truncate text-right text-xs text-muted-foreground">
+              {brl(item.price)}
+            </span>
+            <span className="num truncate text-right text-sm font-bold text-primary">
+              {brl(item.price * item.quantity)}
+            </span>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              aria-label={`Remover ${item.name}`}
+              className="size-7 shrink-0 rounded-md text-destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove(item.id);
+              }}
+            >
+              <Trash2 className="size-3.5" />
+            </Button>
           </li>
         ))}
       </ul>
 
-      <footer className="shrink-0 border-t border-border bg-surface p-3">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2">
-          <span className="font-display text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Total da venda
+      <footer className="grid gap-2 border-t border-border p-2">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5">
+          <span className="truncate font-display text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            Cliente
           </span>
-          <span className="num font-display text-3xl font-bold leading-none text-primary">
-            {brl(total)}
+          <span className="shrink-0 font-display text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
+            Consumidor final
           </span>
         </div>
+
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-md bg-primary px-3 py-2 text-primary-foreground">
+          <span className="truncate font-display text-[11px] font-bold uppercase tracking-[0.14em]">
+            Total da venda
+          </span>
+          <span className="num shrink-0 font-display text-2xl font-bold">{brl(total)}</span>
+        </div>
+
         <Button
           type="button"
           onClick={onFinish}
           disabled={items.length === 0}
-          className="mt-3 h-14 w-full gap-2 rounded-sm bg-success font-display text-base font-bold uppercase tracking-[0.12em] text-success-foreground hover:bg-success/90"
+          className="h-12 gap-2 rounded-md bg-success text-success-foreground hover:bg-success/90"
         >
-          Finalizar venda
-          <KeyHint>F4</KeyHint>
+          <CheckCircle2 className="size-5 shrink-0" />
+          <span className="grid text-left">
+            <span className="font-display text-sm font-bold leading-tight">Finalizar venda</span>
+            <span className="text-[10px] leading-tight opacity-80">F10 ou Enter</span>
+          </span>
         </Button>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCash}
+            className="h-10 gap-2 rounded-md text-xs font-semibold"
+          >
+            <Banknote className="size-4" />
+            Dinheiro
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onPix}
+            className="h-10 gap-2 rounded-md text-xs font-semibold"
+          >
+            <QrCode className="size-4" />
+            PIX Checkout
+          </Button>
+        </div>
       </footer>
-    </Panel>
+    </section>
   );
 }
