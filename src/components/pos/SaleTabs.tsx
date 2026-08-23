@@ -29,7 +29,7 @@ export function SaleTabs({
               Atendimentos
             </p>
             <p className="num whitespace-nowrap text-[11px] text-muted-foreground">
-              {`${sessions.length} de 8 vendas abertas`}
+              {`${sessions.length} de 8 vendas\u00a0abertas`}
             </p>
           </div>
         </div>
