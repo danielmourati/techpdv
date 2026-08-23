@@ -105,7 +105,7 @@ function FrenteDeCaixa() {
           <QuickAddGrid onAdd={(p) => sales.addProduct(p, 1)} />
         </div>
 
-        <div className="min-h-0 overflow-hidden">
+        <div className="grid min-h-0 overflow-hidden">
           <CouponPanel
             items={sales.active?.items ?? []}
             total={sales.activeTotal}
