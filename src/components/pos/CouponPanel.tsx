@@ -54,7 +54,7 @@ export function CouponPanel({
         </Button>
       </header>
 
-      <div className="grid grid-cols-[minmax(0,1fr)_5.5rem_4.5rem_5rem_2rem] items-center gap-2 border-b border-border px-3 py-2 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+      <div className="grid grid-cols-[minmax(0,1fr)_6.5rem_4.5rem_5rem_2rem] items-center gap-2 border-b border-border px-3 py-2 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
         <span>Produto</span>
         <span className="text-center">Qtd.</span>
         <span className="text-right">Unit.</span>
@@ -73,7 +73,7 @@ export function CouponPanel({
             key={item.id}
             onClick={() => onSelect(item.id)}
             className={cn(
-              "grid cursor-pointer grid-cols-[minmax(0,1fr)_5.5rem_4.5rem_5rem_2rem] items-center gap-2 px-3 py-2",
+              "grid cursor-pointer grid-cols-[minmax(0,1fr)_6.5rem_4.5rem_5rem_2rem] items-center gap-2 px-3 py-2",
               item.id === currentItemId ? "bg-primary/5" : "hover:bg-surface",
             )}
           >
@@ -94,6 +94,7 @@ export function CouponPanel({
             </div>
 
             <div className="flex items-center justify-center gap-1">
+              {/* itens por peso ajustam em 0,100 kg */}
               <Button
                 type="button"
                 size="icon"
@@ -102,13 +103,14 @@ export function CouponPanel({
                 className="size-6 shrink-0 rounded-md"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onChangeQuantity(item.id, -1);
+                  onChangeQuantity(item.id, item.unit === "KG" ? -0.1 : -1);
                 }}
               >
                 <Minus className="size-3" />
               </Button>
-              <span className="num w-8 rounded-md border border-border py-0.5 text-center text-xs font-bold">
+              <span className="num w-12 rounded-md border border-border py-0.5 text-center text-xs font-bold">
                 {qty(item.quantity)}
+                {item.unit === "KG" ? " kg" : ""}
               </span>
               <Button
                 type="button"
@@ -118,7 +120,7 @@ export function CouponPanel({
                 className="size-6 shrink-0 rounded-md"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onChangeQuantity(item.id, 1);
+                  onChangeQuantity(item.id, item.unit === "KG" ? 0.1 : 1);
                 }}
               >
                 <Plus className="size-3" />
@@ -127,6 +129,7 @@ export function CouponPanel({
 
             <span className="num truncate text-right text-xs text-muted-foreground">
               {brl(item.price)}
+              {item.unit === "KG" ? "/kg" : ""}
             </span>
             <span className="num truncate text-right text-sm font-bold text-primary">
               {brl(item.price * item.quantity)}
