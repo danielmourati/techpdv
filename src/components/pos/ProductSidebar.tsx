@@ -34,7 +34,7 @@ export function ProductSidebar({
         <img
           src={productPlaceholder}
           alt={productName ? `Imagem do produto ${productName}` : "Imagem do produto"}
-          className="max-h-full w-auto max-w-full rounded-sm object-contain"
+          className="h-full w-full rounded-sm object-contain"
           loading="lazy"
         />
       </div>

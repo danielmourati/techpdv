@@ -6,6 +6,7 @@ export type Product = {
   price: number;
   stock: number;
   quickAdd?: boolean;
+  soldByWeight?: boolean;
 };
 
 export const MOCK_PRODUCTS: Product[] = [
@@ -23,6 +24,10 @@ export const MOCK_PRODUCTS: Product[] = [
   { id: "p12", code: "7891000100112", name: "PAPEL HIGIENICO 12UN", unit: "FD", price: 22.5, stock: 51 },
   { id: "p13", code: "7891000100113", name: "MACARRAO ESPAGUETE 500G", unit: "PC", price: 4.79, stock: 190 },
   { id: "p14", code: "7891000100114", name: "MOLHO DE TOMATE 340G", unit: "UN", price: 3.29, stock: 230 },
+  { id: "w1", code: "000001", name: "BANANA PRATA KG", unit: "KG", price: 8.9, stock: 34, quickAdd: true, soldByWeight: true },
+  { id: "w2", code: "000002", name: "TOMATE ITALIANO KG", unit: "KG", price: 11.49, stock: 27, quickAdd: true, soldByWeight: true },
+  { id: "w3", code: "000003", name: "FILE DE FRANGO KG", unit: "KG", price: 22.9, stock: 18, soldByWeight: true },
+  { id: "w4", code: "000004", name: "QUEIJO MUSSARELA KG", unit: "KG", price: 42.9, stock: 9, soldByWeight: true },
   { id: "p15", code: "7891000100115", name: "BISCOITO RECHEADO 140G", unit: "UN", price: 3.49, stock: 310 },
 ];
 
