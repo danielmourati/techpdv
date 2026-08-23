@@ -29,7 +29,7 @@ export function CouponPanel({
   onPix: () => void;
 }) {
   return (
-    <section className="grid min-h-0 grid-rows-[auto_auto_minmax(0,1fr)_auto] overflow-hidden rounded-md border border-border bg-card">
+    <section className="grid h-full min-h-0 grid-rows-[auto_auto_minmax(0,1fr)_auto] overflow-hidden rounded-md border border-border bg-card">
       <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border px-3 py-2">
         <span className="grid size-10 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
           <Receipt className="size-5" />
