@@ -39,7 +39,7 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
   }, [parsed]);
 
   const selected = results[0];
-  const effectiveQty = parsed.factor ?? Number(quantity.replace(",", ".")) || 1;
+  const effectiveQty = parsed.factor ?? (Number(quantity.replace(",", ".")) || 1);
   const numPrice = price ? Number(price.replace(",", ".")) : selected?.price ?? 0;
 
   const reset = () => {
