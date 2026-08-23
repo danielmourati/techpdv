@@ -21,7 +21,7 @@ export function ProductSidebar({
   itemValue,
   status,
 }: {
-  productName?: string;
+  productName?: string | undefined;
   stock: number;
   unit: string;
   unitValue: number;
