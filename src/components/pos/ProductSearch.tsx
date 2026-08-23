@@ -1,5 +1,5 @@
 import { forwardRef, useMemo, useState } from "react";
-import { Barcode, Search } from "lucide-react";
+import { Plus, ScanBarcode } from "lucide-react";
 import { searchProducts, type Product } from "@/data/mock-products";
 import { brl } from "@/lib/format";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,14 @@ type Props = {
   onAdd: (product: Product, quantity: number, price?: number) => void;
 };
 
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="mb-1 block font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+      {children}
+    </span>
+  );
+}
+
 export const ProductSearch = forwardRef<HTMLInputElement, Props>(function ProductSearch(
   { onAdd },
   ref,
@@ -19,66 +27,90 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
   const [price, setPrice] = useState("");
 
   const results = useMemo(() => searchProducts(term), [term]);
+  const selected = results[0];
+  const numQty = Number(quantity.replace(",", ".")) || 1;
+  const numPrice = price ? Number(price.replace(",", ".")) : selected?.price ?? 0;
 
   const commit = (product: Product) => {
-    const q = Number(quantity.replace(",", ".")) || 1;
     const p = price ? Number(price.replace(",", ".")) : undefined;
-    onAdd(product, q, p);
+    onAdd(product, numQty, p);
     setTerm("");
     setQuantity("1");
     setPrice("");
   };
 
   return (
-    <div className="relative rounded-md border border-border bg-card p-3">
-      <div className="grid gap-2 md:grid-cols-[minmax(0,1fr)_7rem_9rem_auto]">
-        <div className="relative min-w-0">
-          <Barcode className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            ref={ref}
-            value={term}
-            onChange={(e) => setTerm(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && results[0]) {
-                e.preventDefault();
-                commit(results[0]);
-              }
-            }}
-            placeholder="Digite ou leia o produto"
-            aria-label="Digite ou leia o produto"
-            className="h-12 rounded-sm border-input pl-9 font-display text-base uppercase tracking-wide"
-          />
+    <div className="relative shrink-0 border-b border-border p-3">
+      <div className="mb-1 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <ScanBarcode className="size-4 shrink-0 text-primary" />
+          <span className="truncate font-display text-[11px] font-bold uppercase tracking-[0.1em] text-primary">
+            Código de barras, código ou nome
+          </span>
         </div>
-        <Input
-          value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-          inputMode="decimal"
-          aria-label="Quantidade"
-          placeholder="Qtd"
-          className="num h-12 rounded-sm text-center text-base"
-        />
-        <Input
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          inputMode="decimal"
-          aria-label="Valor unitário"
-          placeholder="Valor R$"
-          className="num h-12 rounded-sm text-center text-base"
-        />
-        <Button
-          type="button"
-          disabled={!results[0]}
-          onClick={() => results[0] && commit(results[0])}
-          className="h-12 gap-2 rounded-sm font-display uppercase tracking-[0.1em]"
-        >
-          <Search className="size-4" />
-          Lançar
-          <KeyHint>Enter</KeyHint>
-        </Button>
+        <KeyHint className="shrink-0 text-muted-foreground">F2</KeyHint>
       </div>
 
+      <Input
+        ref={ref}
+        value={term}
+        onChange={(e) => setTerm(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && selected) {
+            e.preventDefault();
+            commit(selected);
+          }
+        }}
+        placeholder="Digite ou leia o produto"
+        aria-label="Digite ou leia o produto"
+        className="h-11 rounded-md border-input font-display text-base font-medium placeholder:text-primary/50"
+      />
+
+      <div className="mt-2 grid gap-2 sm:grid-cols-3">
+        <label className="min-w-0">
+          <FieldLabel>Quantidade</FieldLabel>
+          <Input
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            inputMode="decimal"
+            aria-label="Quantidade"
+            className="num h-11 rounded-md text-base font-semibold"
+          />
+        </label>
+        <label className="min-w-0">
+          <FieldLabel>Valor unitário</FieldLabel>
+          <Input
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            inputMode="decimal"
+            aria-label="Valor unitário"
+            placeholder={brl(selected?.price ?? 0)}
+            className="num h-11 rounded-md text-base font-semibold"
+          />
+        </label>
+        <label className="min-w-0">
+          <FieldLabel>Valor total</FieldLabel>
+          <Input
+            readOnly
+            value={brl(numQty * numPrice)}
+            aria-label="Valor total"
+            className="num h-11 rounded-md bg-surface text-base font-semibold"
+          />
+        </label>
+      </div>
+
+      <Button
+        type="button"
+        disabled={!selected}
+        onClick={() => selected && commit(selected)}
+        className="mt-2 h-11 w-full gap-2 rounded-md font-display text-sm font-bold"
+      >
+        <Plus className="size-4" />
+        Lançar produto no cupom
+      </Button>
+
       {results.length > 0 && (
-        <ul className="absolute left-3 right-3 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-sm border border-border bg-popover shadow-lg">
+        <ul className="absolute left-3 right-3 top-[7.5rem] z-20 max-h-64 overflow-y-auto rounded-md border border-border bg-popover shadow-lg">
           {results.map((p) => (
             <li key={p.id}>
               <button
