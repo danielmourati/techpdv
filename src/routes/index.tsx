@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { MOCK_PRODUCTS, type Product } from "@/data/mock-products";
+import { getStoredProducts, type Product } from "@/data/mock-products";
 import { useSalesSessions } from "@/hooks/useSalesSessions";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/pos/AppSidebar";
@@ -14,6 +14,9 @@ import { CouponPanel } from "@/components/pos/CouponPanel";
 import { PixModal } from "@/components/pos/PixModal";
 import { NfceStepperModal } from "@/components/pos/NfceStepperModal";
 import { WeightPromptModal } from "@/components/pos/WeightPromptModal";
+import { getStoredSalesHistory, saveStoredSalesHistory, type CompletedSale } from "@/data/mock-sales-history";
+import { getStoredFinancial, saveStoredFinancial, type FinancialEntry } from "@/data/mock-financial";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,6 +41,7 @@ export const Route = createFileRoute("/")({
 });
 
 function FrenteDeCaixa() {
+  const { user } = useAuth();
   const sales = useSalesSessions();
   const searchRef = useRef<HTMLInputElement>(null);
   const [pixOpen, setPixOpen] = useState(false);
@@ -65,13 +69,64 @@ function FrenteDeCaixa() {
     return () => window.removeEventListener("keydown", onKey);
   }, [sales]);
 
+  const products = getStoredProducts();
   const currentProduct = sales.currentItem
-    ? MOCK_PRODUCTS.find((p) => p.id === sales.currentItem?.productId)
+    ? products.find((p) => p.id === sales.currentItem?.productId)
     : undefined;
 
   const requestWeight = (product: Product, weight?: number | null) => {
     setSuggestedWeight(weight ?? null);
     setWeightProduct(product);
+  };
+
+  const handleFinishSale = (method: "PIX" | "DINHEIRO" | "CARTAO_DEBITO" | "CARTAO_CREDITO") => {
+    if (!sales.active || sales.active.items.length === 0) {
+      toast.error("Nenhum item adicionado à venda.");
+      return;
+    }
+
+    const receiptNumber = Math.floor(100 + Math.random() * 900);
+    const dateStr = new Date().toISOString().split("T")[0];
+    const timeStr = new Date().toLocaleTimeString("pt-BR");
+
+    const newSale: CompletedSale = {
+      id: `sale-${Date.now()}`,
+      code: `VDA-00${receiptNumber}`,
+      receiptNumber,
+      date: dateStr,
+      time: timeStr,
+      customerName: "Consumidor Final",
+      operator: user?.name ?? "Operador de Caixa",
+      items: [...sales.active.items],
+      subtotal: sales.activeTotal,
+      discount: 0,
+      total: sales.activeTotal,
+      paymentMethod: method,
+      amountPaid: sales.activeTotal,
+      change: 0,
+      status: "CONCLUIDA",
+      nfceKey: `3526 0812 3456 7800 0190 6500 1000 0001 ${Math.floor(1000 + Math.random() * 9000)} 5678`,
+    };
+
+    saveStoredSalesHistory([newSale, ...getStoredSalesHistory()]);
+
+    const newFin: FinancialEntry = {
+      id: `fin-${Date.now()}`,
+      description: `Venda PDV Cupom #${receiptNumber}`,
+      type: "RECEITA",
+      category: "Vendas à Vista",
+      amount: newSale.total,
+      paymentMethod: method,
+      status: "PAGO",
+      dueDate: dateStr,
+      paymentDate: `${dateStr} ${timeStr}`,
+      operator: newSale.operator,
+      createdAt: dateStr,
+    };
+    saveStoredFinancial([newFin, ...getStoredFinancial()]);
+
+    sales.clearActive();
+    toast.success(`Venda #${receiptNumber} finalizada com sucesso!`);
   };
 
   return (
@@ -118,7 +173,7 @@ function FrenteDeCaixa() {
                 onSelect={sales.setCurrentItemId}
                 onClear={sales.clearActive}
                 onFinish={() => setPixOpen(true)}
-                onCash={() => toast.success("Recebimento em dinheiro (simulado)")}
+                onCash={() => handleFinishSale("DINHEIRO")}
                 onPix={() => setPixOpen(true)}
               />
             </div>
@@ -142,10 +197,9 @@ function FrenteDeCaixa() {
         total={sales.activeTotal}
         onOpenChange={setPixOpen}
         onConfirmed={() => {
+          handleFinishSale("PIX");
           setPixOpen(false);
           setNfceOpen(true);
-          toast.success("Pagamento PIX confirmado (simulado)");
-          sales.clearActive();
         }}
       />
       <NfceStepperModal open={nfceOpen} onOpenChange={setNfceOpen} />
