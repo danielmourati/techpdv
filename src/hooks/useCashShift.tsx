@@ -10,8 +10,10 @@ import { getStoredSalesHistory, type CompletedSale } from "@/data/mock-sales-his
 import { MOCK_USERS } from "@/data/mock-auth";
 
 export function useCashShift() {
-  const [currentShift, setCurrentShift] = useState<CashShift | null>(() => getCurrentShift());
-  const [history, setHistory] = useState<CashShift[]>(() => getShiftHistory());
+  // Keep the first server and browser renders identical. Persisted browser data
+  // is loaded after hydration by the effect below.
+  const [currentShift, setCurrentShift] = useState<CashShift | null>(null);
+  const [history, setHistory] = useState<CashShift[]>([]);
 
   const refreshShift = useCallback(() => {
     setCurrentShift(getCurrentShift());
@@ -19,6 +21,7 @@ export function useCashShift() {
   }, []);
 
   useEffect(() => {
+    refreshShift();
     window.addEventListener("meupdv_shift_updated", refreshShift);
     window.addEventListener("meupdv_shift_history_updated", refreshShift);
     return () => {
