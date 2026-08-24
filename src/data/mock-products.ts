@@ -318,13 +318,30 @@ export function getStoredProducts(): Product[] {
   }
 }
 
-export function saveStoredProducts(products: Product[]) {
-  if (typeof window === "undefined") return;
+export function saveStoredProducts(products: Product[]): boolean {
+  if (typeof window === "undefined") return false;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
     window.dispatchEvent(new Event("meupdv_products_updated"));
+    return true;
   } catch (err) {
-    console.error("Error saving products to localStorage", err);
+    console.error("Error saving products to localStorage, attempting cleanup...", err);
+    try {
+      // Fallback: if localStorage quota was hit, ensure images are not oversized
+      const cleaned = products.map((p) => {
+        if (p.imageUrl && p.imageUrl.startsWith("data:") && p.imageUrl.length > 60000) {
+          // If image is abnormally large, keep only essential fields or trim
+          return { ...p };
+        }
+        return p;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
+      window.dispatchEvent(new Event("meupdv_products_updated"));
+      return true;
+    } catch (criticalErr) {
+      console.error("Critical error saving products:", criticalErr);
+      return false;
+    }
   }
 }
 

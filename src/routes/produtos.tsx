@@ -53,7 +53,12 @@ import {
   type ProductCategory,
 } from "@/data/mock-products";
 
-async function compressImage(file: File, maxWidth = 500, maxHeight = 500, quality = 0.82): Promise<string> {
+async function compressImage(
+  file: File,
+  maxWidth = 320,
+  maxHeight = 320,
+  quality = 0.78,
+): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -77,13 +82,16 @@ async function compressImage(file: File, maxWidth = 500, maxHeight = 500, qualit
         canvas.height = height;
         const ctx = canvas.getContext("2d");
         if (!ctx) {
-          resolve(e.target?.result as string);
+          reject(new Error("Canvas 2D não disponível para otimização da imagem."));
           return;
         }
+        // Fundo branco para preservar transparências de PNG sem fundo preto
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
         resolve(canvas.toDataURL("image/jpeg", quality));
       };
-      img.onerror = () => resolve(e.target?.result as string);
+      img.onerror = () => reject(new Error("Arquivo de imagem corrompido ou formato inválido."));
       img.src = e.target?.result as string;
     };
     reader.onerror = reject;
@@ -275,16 +283,27 @@ function ProdutosPage() {
             }
           : p,
       );
-      saveStoredProducts(updated);
-      toast.success(`Produto "${formData.name}" atualizado com sucesso.`);
+      const ok = saveStoredProducts(updated);
+      if (ok) {
+        setProducts(updated);
+        toast.success(`Produto "${formData.name}" atualizado com sucesso.`);
+      } else {
+        toast.error("Não foi possível salvar o produto no armazenamento local.");
+      }
     } else {
       const newProd: Product = {
         id: `p${Date.now()}`,
         ...formData,
         updatedAt: new Date().toISOString(),
       };
-      saveStoredProducts([...products, newProd]);
-      toast.success(`Produto "${formData.name}" cadastrado com sucesso.`);
+      const updated = [...products, newProd];
+      const ok = saveStoredProducts(updated);
+      if (ok) {
+        setProducts(updated);
+        toast.success(`Produto "${formData.name}" cadastrado com sucesso.`);
+      } else {
+        toast.error("Não foi possível salvar o produto no armazenamento local.");
+      }
     }
 
     setIsModalOpen(false);
@@ -299,6 +318,7 @@ function ProdutosPage() {
     if (!productToDelete) return;
     const updated = products.filter((p) => p.id !== productToDelete.id);
     saveStoredProducts(updated);
+    setProducts(updated);
     setIsDeleteOpen(false);
     toast.success(`Produto "${productToDelete.name}" excluído.`);
   };

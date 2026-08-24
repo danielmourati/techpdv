@@ -342,6 +342,13 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
   const [nfceOpen, setNfceOpen] = useState(false);
   const [weightProduct, setWeightProduct] = useState<Product | null>(null);
   const [suggestedWeight, setSuggestedWeight] = useState<number | null>(null);
+  const [products, setProducts] = useState<Product[]>(() => getStoredProducts());
+
+  useEffect(() => {
+    const handleProductsUpdate = () => setProducts(getStoredProducts());
+    window.addEventListener("meupdv_products_updated", handleProductsUpdate);
+    return () => window.removeEventListener("meupdv_products_updated", handleProductsUpdate);
+  }, []);
 
   useEffect(() => {
     searchRef.current?.focus();
@@ -414,7 +421,6 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [sales]);
 
-  const products = getStoredProducts();
   const currentProduct = sales.currentItem
     ? products.find((p) => p.id === sales.currentItem?.productId)
     : undefined;
