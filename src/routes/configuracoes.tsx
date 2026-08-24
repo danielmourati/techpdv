@@ -15,6 +15,7 @@ import {
   Store,
   UserCheck,
   UserPlus,
+  Palette,
   Users,
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -38,6 +39,7 @@ import {
   type StoreSettings,
 } from "@/data/mock-settings";
 import { MOCK_USERS, type AuthUser } from "@/data/mock-auth";
+import { ThemePicker } from "@/components/pos/ThemePicker";
 
 export const Route = createFileRoute("/configuracoes")({
   head: () => ({
@@ -83,7 +85,7 @@ function ConfiguracoesPage() {
       <form onSubmit={handleSaveSettings} className="space-y-6">
         <Tabs defaultValue="empresa" className="space-y-4">
           <div className="flex items-center justify-between">
-            <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full md:w-auto">
+            <TabsList className="grid grid-cols-2 md:grid-cols-6 w-full md:w-auto">
               <TabsTrigger value="empresa" className="text-xs flex items-center gap-1.5">
                 <Building2 className="size-3.5" />
                 Empresa
@@ -100,6 +102,10 @@ function ConfiguracoesPage() {
                 <FileCode className="size-3.5" />
                 Fiscal & NFC-e
               </TabsTrigger>
+              <TabsTrigger value="aparencia" className="text-xs flex items-center gap-1.5">
+                <Palette className="size-3.5" />
+                Aparência
+              </TabsTrigger>
               <TabsTrigger value="usuarios" className="text-xs flex items-center gap-1.5">
                 <Users className="size-3.5" />
                 Usuários & Acesso
@@ -111,6 +117,22 @@ function ConfiguracoesPage() {
               Salvar Alterações
             </Button>
           </div>
+
+          {/* TAB: Aparência */}
+          <TabsContent value="aparencia">
+            <Card className="border-border">
+              <CardHeader>
+                <CardTitle className="text-sm font-semibold">Paleta de Cores do Sistema</CardTitle>
+                <CardDescription className="text-xs">
+                  Escolha o tema visual da frente de caixa e dos cadastros conforme a iluminação da
+                  loja e o tipo de operação
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ThemePicker />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* TAB 1: Dados da Empresa */}
           <TabsContent value="empresa">

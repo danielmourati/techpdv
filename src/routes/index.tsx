@@ -86,7 +86,7 @@ function FrenteDeCaixa() {
     }
 
     const receiptNumber = Math.floor(100 + Math.random() * 900);
-    const dateStr = new Date().toISOString().split("T")[0];
+    const dateStr = new Date().toISOString().slice(0, 10);
     const timeStr = new Date().toLocaleTimeString("pt-BR");
 
     const newSale: CompletedSale = {

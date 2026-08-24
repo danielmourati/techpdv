@@ -64,7 +64,7 @@ const DEFAULT_SUPPLIER: Omit<Supplier, "id"> = {
   paymentTerms: "28 DDL (Boleto)",
   active: true,
   notes: "",
-  createdAt: new Date().toISOString().split("T")[0],
+  createdAt: new Date().toISOString().slice(0, 10),
 };
 
 function FornecedoresPage() {
