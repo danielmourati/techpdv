@@ -55,7 +55,11 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { user } = useAuth();
+  const { user, hydrated } = useAuth();
+
+  if (!hydrated) {
+    return <div className="min-h-screen w-full bg-background" />;
+  }
 
   if (!user) {
     return <HomeLoginPortal />;
