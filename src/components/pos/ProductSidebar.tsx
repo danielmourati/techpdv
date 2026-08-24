@@ -45,25 +45,25 @@ export function ProductSidebar({
 
   return (
     <aside className="grid min-h-0 grid-rows-[1fr_1.7fr_auto] gap-2">
-      <div className="grid min-h-0 place-items-center overflow-hidden rounded-xl border border-border bg-card p-4 shadow-2xs">
+      <div className="min-h-0 overflow-hidden rounded-xl border border-border bg-card p-3 shadow-2xs">
         {settings.logoUrl ? (
           <img
             src={settings.logoUrl}
             alt={`Logo ${settings.tradeName}`}
-            className="max-h-full max-w-full object-contain"
+            className="block size-full object-contain object-center"
           />
         ) : (
-          <span className="break-words px-2 text-center font-display text-4xl font-black uppercase tracking-wide text-primary sm:text-5xl">
+          <span className="grid size-full place-items-center break-words px-2 text-center font-display text-4xl font-black uppercase tracking-wide text-primary sm:text-5xl">
             {getInitials(settings.tradeName || "MeuPDV")}
           </span>
         )}
       </div>
 
-      <div className="grid min-h-0 place-items-center overflow-hidden rounded-xl border border-border bg-surface p-4 shadow-2xs">
+      <div className="min-h-0 overflow-hidden rounded-xl border border-border bg-surface p-3 shadow-2xs">
         <img
           src={imageUrl || productPlaceholder}
           alt={productName ? `Imagem do produto ${productName}` : "Imagem do produto"}
-          className="max-h-full max-w-full rounded-lg object-contain"
+          className="block size-full rounded-lg object-contain object-center"
           loading="lazy"
         />
       </div>

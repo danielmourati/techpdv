@@ -74,12 +74,18 @@ function HomePage() {
 // ---------------------------------------------------------------------------
 function HomeLoginPortal() {
   const { login, openingFloat } = useAuth();
-  const [selectedUserId, setSelectedUserId] = useState<string>(MOCK_USERS[0].id);
+  const { saved: settings } = useSettings();
+  const defaultUser = MOCK_USERS[0];
+  const [selectedUserId, setSelectedUserId] = useState<string>(defaultUser?.id ?? "");
   const [password, setPassword] = useState<string>("");
   const [cashFloat, setCashFloat] = useState<string>(String(openingFloat || 100));
   const [loading, setLoading] = useState(false);
 
-  const selectedUser = MOCK_USERS.find((u) => u.id === selectedUserId) ?? MOCK_USERS[0]!;
+  const selectedUser = MOCK_USERS.find((u) => u.id === selectedUserId) ?? defaultUser;
+
+  if (!selectedUser) {
+    return null;
+  }
 
   const handleSelectUser = (id: string) => {
     setSelectedUserId(id);
