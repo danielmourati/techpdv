@@ -8,6 +8,7 @@ import React, {
   type ReactNode,
 } from "react";
 import {
+  INITIAL_SETTINGS,
   getStoredSettings,
   saveStoredSettings,
   type StoreSettings,
@@ -35,7 +36,8 @@ function applyTheme(theme: ThemeId) {
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [saved, setSaved] = useState<StoreSettings>(() => getStoredSettings());
+  // Primeiro render sempre igual ao servidor; o localStorage entra no useEffect.
+  const [saved, setSaved] = useState<StoreSettings>(INITIAL_SETTINGS);
   const [settings, setSettings] = useState<StoreSettings>(saved);
 
   // Hidrata do localStorage depois do SSR e mantém sincronizado entre abas/telas.
