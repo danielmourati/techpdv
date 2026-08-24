@@ -169,6 +169,34 @@ function ConfiguracoesPage() {
                     />
                   </div>
 
+                  <div className="space-y-1 sm:col-span-2">
+                    <Label htmlFor="cfg-logo" className="text-xs font-semibold">
+                      Logo do Estabelecimento (URL)
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-md border border-border bg-primary font-display text-xs font-black text-primary-foreground">
+                        {settings.logoUrl ? (
+                          <img
+                            src={settings.logoUrl}
+                            alt="Logo do estabelecimento"
+                            className="size-full object-contain"
+                          />
+                        ) : (
+                          "PD"
+                        )}
+                      </span>
+                      <Input
+                        id="cfg-logo"
+                        value={settings.logoUrl}
+                        onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value })}
+                        placeholder="https://... (deixe vazio para usar as iniciais)"
+                        className="h-9 text-xs"
+                      />
+                    </div>
+                  </div>
+
+
+
                   <div className="space-y-1">
                     <Label htmlFor="cfg-cnpj" className="text-xs font-semibold">
                       CNPJ
