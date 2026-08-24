@@ -161,8 +161,12 @@ export function useCashShift() {
         expectedCash,
         countedCash: params.countedCash,
         difference,
-        differenceReason: hasDivergence ? params.differenceReason?.trim() : undefined,
-        adminAuthorizedBy: hasDivergence ? "Administrador Geral" : undefined,
+        ...(hasDivergence
+          ? {
+              differenceReason: params.differenceReason?.trim() ?? "",
+              adminAuthorizedBy: "Administrador Geral",
+            }
+          : {}),
       };
 
       // Save to shift history and clear/update active shift
