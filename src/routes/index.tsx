@@ -9,6 +9,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { getStoredProducts, type Product } from "@/data/mock-products";
+import { parseTerm } from "@/lib/parse-input";
 import { useSalesSessions } from "@/hooks/useSalesSessions";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/pos/AppSidebar";
@@ -334,17 +335,68 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
   }, []);
 
   useEffect(() => {
+    let barcodeBuffer = "";
+    let lastKeyTime = Date.now();
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "F2") {
         e.preventDefault();
         searchRef.current?.focus();
         searchRef.current?.select();
+        return;
       }
       if (e.key === "F4" || e.key === "F10") {
         e.preventDefault();
         if (sales.active && sales.active.items.length > 0) setPixOpen(true);
+        return;
+      }
+
+      // Ignore modifier keys
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+      if (e.key.startsWith("F") && e.key.length <= 3) return;
+
+      const now = Date.now();
+      const isFastScan = now - lastKeyTime < 65;
+      lastKeyTime = now;
+
+      // When Enter is received from a rapid barcode scanner
+      if (e.key === "Enter") {
+        if (barcodeBuffer.length >= 3) {
+          const parsed = parseTerm(barcodeBuffer);
+          const allProds = getStoredProducts();
+          const found = allProds.find(
+            (p) =>
+              p.code === parsed.term ||
+              p.internalCode?.toLowerCase() === parsed.term.toLowerCase()
+          );
+          if (found) {
+            e.preventDefault();
+            if (found.soldByWeight) {
+              requestWeight(found, parsed.scaleWeight ?? parsed.factor);
+            } else {
+              const qtyToAdd = parsed.factor ?? 1;
+              sales.addProduct(found, qtyToAdd);
+              toast.success(`+ ${qtyToAdd}x ${found.name} lido pelo leitor!`, { duration: 1500 });
+            }
+            barcodeBuffer = "";
+            searchRef.current?.focus();
+            return;
+          }
+        }
+        barcodeBuffer = "";
+        return;
+      }
+
+      // Buffer characters
+      if (e.key.length === 1) {
+        if (isFastScan || barcodeBuffer.length > 0) {
+          barcodeBuffer += e.key;
+        } else {
+          barcodeBuffer = e.key;
+        }
       }
     };
+
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [sales]);
@@ -454,8 +506,6 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
                 onSelect={sales.setCurrentItemId}
                 onClear={sales.clearActive}
                 onFinish={() => setPixOpen(true)}
-                onCash={() => handleFinishSale("DINHEIRO")}
-                onPix={() => setPixOpen(true)}
               />
             </div>
           </main>

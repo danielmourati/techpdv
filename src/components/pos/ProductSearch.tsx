@@ -1,6 +1,7 @@
 import { forwardRef, useMemo, useState } from "react";
 import { Plus, ScanBarcode, Scale, X } from "lucide-react";
-import { searchProducts, MOCK_PRODUCTS, type Product } from "@/data/mock-products";
+import { toast } from "sonner";
+import { searchProducts, MOCK_PRODUCTS, getStoredProducts, type Product } from "@/data/mock-products";
 import { brl } from "@/lib/format";
 import { parseTerm } from "@/lib/parse-input";
 import { Input } from "@/components/ui/input";
@@ -32,7 +33,8 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
 
   const results = useMemo(() => {
     if (parsed.scaleCode) {
-      const found = MOCK_PRODUCTS.find((p) => p.code === parsed.scaleCode);
+      const all = getStoredProducts();
+      const found = all.find((p) => p.code === parsed.scaleCode);
       return found ? [found] : [];
     }
     return searchProducts(parsed.term);
@@ -48,15 +50,30 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
     setPrice("");
   };
 
-  const commit = (product: Product) => {
+  const commit = (product: Product, overrideQty?: number) => {
+    const qtyToAdd = overrideQty ?? effectiveQty;
     if (product.soldByWeight) {
       onWeightRequest(product, parsed.scaleWeight ?? parsed.factor ?? null);
       reset();
       return;
     }
     const p = price ? Number(price.replace(",", ".")) : undefined;
-    onAdd(product, effectiveQty, p);
+    onAdd(product, qtyToAdd, p);
+    toast.success(`+ ${qtyToAdd}x ${product.name} lançado!`, { duration: 1500 });
     reset();
+  };
+
+  const handleInputChange = (val: string) => {
+    setTerm(val);
+    const p = parseTerm(val);
+    // Instant detection for standard 8 to 14 digit barcode scanner reads
+    if (p.term.length >= 8) {
+      const all = getStoredProducts();
+      const exact = all.find((prod) => prod.code === p.term);
+      if (exact && !val.endsWith("*")) {
+        commit(exact, p.factor ?? undefined);
+      }
+    }
   };
 
   return (
@@ -75,11 +92,23 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
         <Input
           ref={ref}
           value={term}
-          onChange={(e) => setTerm(e.target.value)}
+          onChange={(e) => handleInputChange(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && selected) {
+            if (e.key === "Enter") {
               e.preventDefault();
-              commit(selected);
+              if (selected) {
+                commit(selected);
+              } else {
+                const all = getStoredProducts();
+                const direct = all.find(
+                  (p) =>
+                    p.code === parsed.term ||
+                    p.internalCode?.toLowerCase() === parsed.term.toLowerCase()
+                );
+                if (direct) {
+                  commit(direct);
+                }
+              }
             }
           }}
           placeholder="Digite ou leia o produto (ex.: 3*7891000100101)"
