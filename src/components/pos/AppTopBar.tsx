@@ -45,14 +45,19 @@ export function AppTopBar({
   return (
     <>
       <header className="grid shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-card px-4 py-2.5 shadow-2xs">
-        <SidebarTrigger className="size-10 shrink-0 rounded-lg border border-border transition-colors hover:bg-accent" />
+        <div className="flex shrink-0 items-center gap-3">
+          <SidebarTrigger className="size-10 shrink-0 rounded-lg border border-border transition-colors hover:bg-accent" />
+        </div>
+
 
         <div className="min-w-0">
-          <h1 className="truncate font-display text-xl font-extrabold leading-tight text-foreground">
+          <h1 className="truncate font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground">
             {title}
           </h1>
-          <p className="truncate text-xs font-medium text-muted-foreground">{storeLabel}</p>
+          <p className="truncate text-sm font-medium text-muted-foreground">{storeLabel}</p>
+
         </div>
+
 
         <div className="flex items-center gap-3">
           {showCashPill && (

@@ -1,6 +1,16 @@
 import { TriangleAlert } from "lucide-react";
 import productPlaceholder from "@/assets/product-placeholder.jpg";
 import { brl } from "@/lib/format";
+import { useSettings } from "@/hooks/useSettings";
+
+function getInitials(name: string) {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "PD";
+  if (words.length === 1) return words[0]!.slice(0, 2).toUpperCase();
+  const first = words[0]!;
+  const last = words[words.length - 1]!;
+  return (first.charAt(0) + last.charAt(0)).toUpperCase();
+}
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
@@ -31,9 +41,24 @@ export function ProductSidebar({
   status: string;
 }) {
   const isOccupied = status.toLowerCase().includes("ocupado");
+  const { saved: settings } = useSettings();
 
   return (
-    <aside className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2.5">
+    <aside className="grid min-h-0 grid-rows-[1fr_1.7fr_auto] gap-2">
+      <div className="grid min-h-0 place-items-center overflow-hidden rounded-xl border border-border bg-card p-4 shadow-2xs">
+        {settings.logoUrl ? (
+          <img
+            src={settings.logoUrl}
+            alt={`Logo ${settings.tradeName}`}
+            className="max-h-full max-w-full object-contain"
+          />
+        ) : (
+          <span className="break-words px-2 text-center font-display text-4xl font-black uppercase tracking-wide text-primary sm:text-5xl">
+            {getInitials(settings.tradeName || "MeuPDV")}
+          </span>
+        )}
+      </div>
+
       <div className="grid min-h-0 place-items-center overflow-hidden rounded-xl border border-border bg-surface p-4 shadow-2xs">
         <img
           src={imageUrl || productPlaceholder}
@@ -44,9 +69,8 @@ export function ProductSidebar({
       </div>
 
       <div className="grid gap-2">
-        <InfoRow label="Estoque" value={`${stock} ${unit}`} />
         <InfoRow label="Valor Unitário" value={brl(unitValue)} />
-        <InfoRow label="Valor Deste Item" value={brl(itemValue)} />
+        <InfoRow label="Estoque" value={`${stock} ${unit}`} />
 
         <div
           className={`grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 rounded-lg border px-3.5 py-2.5 shadow-2xs ${

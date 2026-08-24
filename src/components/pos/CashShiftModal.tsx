@@ -108,8 +108,7 @@ export function CashShiftModal({ open, onOpenChange, initialMode }: CashShiftMod
     setTimeout(() => {
       const result = closeShift({
         countedCash: parsedCountedCash,
-        differenceReason: hasDivergence ? differenceReason : undefined,
-        adminPassword: hasDivergence ? adminPassword : undefined,
+        ...(hasDivergence ? { differenceReason, adminPassword } : {}),
       });
 
       setIsSubmitting(false);
