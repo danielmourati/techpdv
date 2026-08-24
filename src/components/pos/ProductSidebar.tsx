@@ -3,6 +3,14 @@ import productPlaceholder from "@/assets/product-placeholder.jpg";
 import { brl } from "@/lib/format";
 import { useSettings } from "@/hooks/useSettings";
 
+function getInitials(name: string) {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "PD";
+  if (words.length === 1) return words[0]!.slice(0, 2).toUpperCase();
+  const first = words[0]!;
+  const last = words[words.length - 1]!;
+  return (first.charAt(0) + last.charAt(0)).toUpperCase();
+}
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
@@ -36,8 +44,8 @@ export function ProductSidebar({
   const { saved: settings } = useSettings();
 
   return (
-    <aside className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] gap-2.5">
-      <div className="grid min-h-32 place-items-center overflow-hidden rounded-xl border border-border bg-card p-4 shadow-2xs">
+    <aside className="grid min-h-0 grid-rows-[1.5fr_1fr_auto] gap-2">
+      <div className="grid min-h-0 place-items-center overflow-hidden rounded-xl border border-border bg-card p-4 shadow-2xs">
         {settings.logoUrl ? (
           <img
             src={settings.logoUrl}
@@ -45,8 +53,8 @@ export function ProductSidebar({
             className="max-h-full max-w-full object-contain"
           />
         ) : (
-          <span className="truncate px-2 text-center font-display text-lg font-black uppercase tracking-wide text-primary">
-            {settings.tradeName || "MeuPDV"}
+          <span className="break-words px-2 text-center font-display text-4xl font-black uppercase tracking-wide text-primary sm:text-5xl">
+            {getInitials(settings.tradeName || "MeuPDV")}
           </span>
         )}
       </div>

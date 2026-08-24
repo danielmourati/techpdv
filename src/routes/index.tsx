@@ -472,7 +472,6 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           <AppTopBar cashTotal={sales.activeTotal} />
-          <CurrentProductBar item={sales.currentItem} />
 
           <main className="grid min-h-0 flex-1 gap-2 overflow-hidden p-2 lg:grid-cols-[16rem_minmax(0,1fr)_22rem] 2xl:grid-cols-[18rem_minmax(0,1fr)_24rem]">
             <div className="hidden min-h-0 lg:grid">
@@ -489,7 +488,8 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
               />
             </div>
 
-            <div className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden rounded-md border border-border bg-card">
+            <div className="grid min-h-0 grid-rows-[auto_auto_minmax(0,1fr)] overflow-hidden rounded-md border border-border bg-card">
+              <CurrentProductBar item={sales.currentItem} />
               <ProductSearch
                 ref={searchRef}
                 onAdd={sales.addProduct}
