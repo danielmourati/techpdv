@@ -23,69 +23,71 @@ export function QuickAddGrid({ onAdd }: { onAdd: (product: Product) => void }) {
 
   return (
     <div className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 px-3 pt-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 px-3.5 pt-3.5 pb-1">
         <div className="min-w-0">
-          <p className="font-display text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
-            Produtos · carregamento rápido
+          <p className="font-display text-xs font-extrabold uppercase tracking-wider text-primary">
+            Atalhos de Venda Rápida
           </p>
-          <p className="truncate font-display text-base font-semibold">
-            Toque para lançar rapidamente
+          <p className="truncate font-display text-base sm:text-lg font-bold text-foreground">
+            Toque para lançar rapidamente no cupom
           </p>
         </div>
-        <span className="num shrink-0 text-[11px] text-muted-foreground">
+        <span className="num shrink-0 text-xs font-semibold text-muted-foreground">
           {products.length} produto(s)
         </span>
       </div>
 
-      <div className="min-h-0 overflow-y-auto p-3">
-        <div className="grid grid-cols-2 gap-2 lg:grid-cols-3 2xl:grid-cols-4">
+      <div className="min-h-0 overflow-y-auto p-3.5">
+        <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-3 2xl:grid-cols-4">
           {visible.map((p) => (
             <button
               key={p.id}
               type="button"
               onClick={() => onAdd(p)}
-              className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-border bg-card px-2 py-2 text-left transition-colors hover:border-primary hover:bg-primary/5"
+              className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 rounded-lg border border-border bg-card p-2.5 text-left transition-all hover:border-primary hover:bg-primary/5 hover:shadow-sm"
             >
-              <div className="size-10 shrink-0 overflow-hidden rounded-md border border-border/60 bg-muted/30">
+              <div className="size-12 shrink-0 overflow-hidden rounded-lg border border-border/60 bg-muted/30 shadow-2xs">
                 <img
                   src={p.imageUrl || productPlaceholder}
                   alt={p.name}
                   aria-hidden
-                  className="size-full object-cover"
+                  className="size-full object-cover transition-transform duration-200 hover:scale-110"
                   loading="lazy"
                 />
               </div>
               <span className="min-w-0">
-                <span className="block truncate font-display text-sm font-bold uppercase">
+                <span className="block truncate font-display text-sm sm:text-base font-extrabold uppercase leading-tight text-foreground">
                   {p.name}
                 </span>
-                <span className="block truncate text-[11px] text-muted-foreground">
+                <span className="block truncate text-xs text-muted-foreground font-medium">
                   {p.category}
                 </span>
               </span>
-              <span className="num shrink-0 text-sm font-bold text-primary">{brl(p.price)}</span>
+              <span className="num shrink-0 text-sm sm:text-base font-extrabold text-primary">
+                {brl(p.price)}
+              </span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-t border-border px-3 py-2">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-t border-border px-3.5 py-2.5">
         <Button
           type="button"
           variant="outline"
           disabled={page === 1}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
-          className="h-9 shrink-0 gap-1 rounded-md text-xs"
+          className="h-10 shrink-0 gap-1.5 rounded-lg text-xs sm:text-sm font-bold"
         >
           <ChevronLeft className="size-4" />
           Anterior
         </Button>
         <div className="min-w-0 text-center">
-          <p className="num truncate text-xs font-semibold">
+          <p className="num truncate text-xs sm:text-sm font-bold text-foreground">
             Página {page} de {pages}
           </p>
-          <p className="truncate text-[10px] text-muted-foreground">
-            Page Up / Page Down · sem recarregar a tela
+          <p className="truncate text-xs text-muted-foreground">
+            Use Page Up / Page Down
           </p>
         </div>
         <Button
@@ -93,7 +95,7 @@ export function QuickAddGrid({ onAdd }: { onAdd: (product: Product) => void }) {
           variant="outline"
           disabled={page === pages}
           onClick={() => setPage((p) => Math.min(pages, p + 1))}
-          className="h-9 shrink-0 gap-1 rounded-md text-xs"
+          className="h-10 shrink-0 gap-1.5 rounded-lg text-xs sm:text-sm font-bold"
         >
           Próxima
           <ChevronRight className="size-4" />

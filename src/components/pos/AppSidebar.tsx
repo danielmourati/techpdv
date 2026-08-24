@@ -80,21 +80,21 @@ export function AppSidebar() {
   const currentPath = routerState.location.pathname;
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b border-sidebar-border">
+    <Sidebar collapsible="icon" className="border-r border-primary/30 bg-primary text-primary-foreground">
+      <SidebarHeader className="border-b border-white/15 bg-primary p-3">
         <Link
           to="/"
-          className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 px-1 py-1 transition-opacity hover:opacity-90"
+          className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 px-1 py-0.5 transition-opacity hover:opacity-90"
         >
-          <span className="grid size-8 shrink-0 place-items-center rounded-md bg-primary font-display text-sm font-bold text-primary-foreground shadow-sm">
+          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white font-display text-base font-black text-primary shadow-md">
             PD
           </span>
           {!collapsed && (
             <span className="min-w-0">
-              <span className="block truncate font-display text-sm font-bold leading-tight tracking-wide">
+              <span className="block truncate font-display text-base font-extrabold leading-tight tracking-wide text-white">
                 MeuPDV
               </span>
-              <span className="block truncate text-[11px] text-muted-foreground">
+              <span className="block truncate text-xs text-white/80">
                 {settings.companyName}
               </span>
             </span>
@@ -102,33 +102,35 @@ export function AppSidebar() {
         </Link>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="bg-primary p-2">
         {GROUPS.map((group) => (
-          <SidebarGroup key={group.label}>
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+          <SidebarGroup key={group.label} className="py-1">
+            <SidebarGroupLabel className="text-xs font-bold uppercase tracking-wider text-white/75 px-2 mb-1">
+              {group.label}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="gap-1">
                 {group.items.map((item) => {
                   const isActive =
                     item.to === "/" ? currentPath === "/" : currentPath.startsWith(item.to);
 
                   return (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+                      <SidebarMenuButton asChild isActive={isActive} tooltip={item.title} className="h-10">
                         <Link
                           to={item.to}
-                          className={`flex items-center gap-2.5 transition-colors ${
+                          className={`flex items-center gap-3 px-3 py-2 text-sm transition-all rounded-lg ${
                             isActive
-                              ? "bg-primary/10 font-semibold text-primary"
-                              : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                              ? "bg-white font-bold text-primary shadow-sm"
+                              : "text-white/90 hover:bg-white/15 hover:text-white font-medium"
                           }`}
                         >
                           <item.icon
-                            className={`size-4 shrink-0 ${
-                              isActive ? "text-primary" : "text-muted-foreground"
+                            className={`size-4.5 shrink-0 ${
+                              isActive ? "text-primary" : "text-white/80"
                             }`}
                           />
-                          <span className="truncate">{item.title}</span>
+                          <span className="truncate text-sm font-semibold">{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -140,39 +142,29 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border p-2">
+      <SidebarFooter className="border-t border-white/15 bg-primary p-2.5">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 rounded-md p-1 text-left transition-colors hover:bg-sidebar-accent"
+              className="grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 rounded-lg border border-white/20 bg-black/15 p-2 text-left transition-colors hover:bg-black/25 focus:outline-none"
             >
               <span
-                className={`grid size-8 shrink-0 place-items-center rounded-md border font-display text-xs font-bold ${
-                  user?.role === "admin"
-                    ? "border-primary/40 bg-primary/15 text-primary"
-                    : "border-success/40 bg-success/15 text-success"
-                }`}
+                className={`grid size-8.5 shrink-0 place-items-center rounded-md font-display text-xs font-bold bg-white text-primary shadow-xs`}
               >
                 {user ? user.avatarText : <UserRound className="size-4" />}
               </span>
               {!collapsed && (
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="truncate font-display text-xs font-bold uppercase leading-tight">
+                    <span className="truncate font-display text-xs font-bold uppercase leading-tight text-white">
                       {user?.name.split(" ")[0] ?? "Usuário"}
                     </span>
-                    <span
-                      className={`shrink-0 rounded px-1 text-[9px] font-bold uppercase ${
-                        user?.role === "admin"
-                          ? "bg-primary/20 text-primary"
-                          : "bg-success/20 text-success"
-                      }`}
-                    >
+                    <span className="shrink-0 rounded bg-white/25 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-white">
                       {user?.role === "admin" ? "ADM" : "OP"}
                     </span>
                   </div>
-                  <span className="block truncate text-[11px] text-muted-foreground">
+                  <span className="block truncate text-xs text-white/80">
                     {user?.roleLabel ?? "Desconectado"}
                   </span>
                 </div>
@@ -202,7 +194,7 @@ export function AppSidebar() {
                       u.role === "admin" ? "bg-primary" : "bg-emerald-500"
                     }`}
                   />
-                  <span>{u.name}</span>
+                  <span className="text-xs font-medium">{u.name}</span>
                 </div>
                 {user?.id === u.id && <UserCheck className="size-4 text-primary" />}
               </DropdownMenuItem>
@@ -211,7 +203,7 @@ export function AppSidebar() {
             <DropdownMenuItem asChild className="cursor-pointer">
               <Link to="/login" className="flex items-center gap-2">
                 <LogIn className="size-4" />
-                <span>Tela de Login</span>
+                <span className="text-xs font-medium">Tela de Login</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -219,7 +211,7 @@ export function AppSidebar() {
               className="flex items-center gap-2 text-destructive cursor-pointer focus:text-destructive"
             >
               <LogOut className="size-4" />
-              <span>Encerrar Sessão</span>
+              <span className="text-xs font-medium">Encerrar Sessão</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

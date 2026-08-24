@@ -14,7 +14,7 @@ type Props = {
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="mb-1 block font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+    <span className="mb-1 block font-display text-xs sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">
       {children}
     </span>
   );
@@ -60,15 +60,15 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
   };
 
   return (
-    <div className="relative shrink-0 border-b border-border p-3">
-      <div className="mb-1 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+    <div className="relative shrink-0 border-b border-border p-3.5 space-y-2.5">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
-          <ScanBarcode className="size-4 shrink-0 text-primary" />
-          <span className="truncate font-display text-[11px] font-bold uppercase tracking-[0.1em] text-primary">
+          <ScanBarcode className="size-5 shrink-0 text-primary" />
+          <span className="truncate font-display text-xs sm:text-sm font-extrabold uppercase tracking-wide text-primary">
             Código de barras, código ou nome · use 3*código para multiplicar
           </span>
         </div>
-        <KeyHint className="shrink-0 text-muted-foreground">F2</KeyHint>
+        <KeyHint className="shrink-0 text-muted-foreground font-bold">F2</KeyHint>
       </div>
 
       <div className="relative">
@@ -84,23 +84,23 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
           }}
           placeholder="Digite ou leia o produto (ex.: 3*7891000100101)"
           aria-label="Digite ou leia o produto"
-          className="h-11 rounded-md border-input pr-28 font-display text-base font-medium placeholder:text-primary/50"
+          className="h-12 rounded-lg border-input pr-28 font-display text-base sm:text-lg font-bold placeholder:text-primary/40 placeholder:font-normal shadow-2xs"
         />
         {parsed.factor !== null && (
-          <span className="num absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-primary px-2 py-1 font-display text-xs font-bold text-primary-foreground">
-            <X className="mr-1 inline size-3" />
+          <span className="num absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md bg-primary px-2.5 py-1 font-display text-xs font-bold text-primary-foreground shadow-2xs">
+            <X className="mr-1 inline size-3.5" />
             {parsed.factor} un
           </span>
         )}
         {parsed.scaleWeight !== null && (
-          <span className="num absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-warning px-2 py-1 font-display text-xs font-bold text-warning-foreground">
-            <Scale className="mr-1 inline size-3" />
+          <span className="num absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md bg-warning px-2.5 py-1 font-display text-xs font-bold text-warning-foreground shadow-2xs">
+            <Scale className="mr-1 inline size-3.5" />
             {parsed.scaleWeight} kg
           </span>
         )}
       </div>
 
-      <div className="mt-2 grid gap-2 sm:grid-cols-3">
+      <div className="grid gap-2.5 sm:grid-cols-3">
         <label className="min-w-0">
           <FieldLabel>Quantidade</FieldLabel>
           <Input
@@ -109,7 +109,7 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
             onChange={(e) => setQuantity(e.target.value)}
             inputMode="decimal"
             aria-label="Quantidade"
-            className="num h-11 rounded-md text-base font-semibold"
+            className="num h-11.5 rounded-lg text-base sm:text-lg font-bold"
           />
         </label>
         <label className="min-w-0">
@@ -120,7 +120,7 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
             inputMode="decimal"
             aria-label="Valor unitário"
             placeholder={brl(selected?.price ?? 0)}
-            className="num h-11 rounded-md text-base font-semibold"
+            className="num h-11.5 rounded-lg text-base sm:text-lg font-bold"
           />
         </label>
         <label className="min-w-0">
@@ -129,7 +129,7 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
             readOnly
             value={brl(effectiveQty * numPrice)}
             aria-label="Valor total"
-            className="num h-11 rounded-md bg-surface text-base font-semibold"
+            className="num h-11.5 rounded-lg bg-surface text-base sm:text-lg font-extrabold text-primary"
           />
         </label>
       </div>
@@ -138,35 +138,35 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
         type="button"
         disabled={!selected}
         onClick={() => selected && commit(selected)}
-        className="mt-2 h-11 w-full gap-2 rounded-md font-display text-sm font-bold"
+        className="h-12 w-full gap-2 rounded-lg font-display text-sm sm:text-base font-extrabold shadow-md shadow-primary/15"
       >
-        <Plus className="size-4" />
+        <Plus className="size-4.5" />
         Lançar produto no cupom
       </Button>
 
       {results.length > 0 && parsed.term.length > 0 && (
-        <ul className="absolute left-3 right-3 top-[7.5rem] z-20 max-h-64 overflow-y-auto rounded-md border border-border bg-popover shadow-lg">
+        <ul className="absolute left-3.5 right-3.5 top-[8.5rem] z-30 max-h-64 overflow-y-auto rounded-xl border border-border bg-popover shadow-xl">
           {results.map((p) => (
             <li key={p.id}>
               <button
                 type="button"
                 onClick={() => commit(p)}
-                className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2 text-left hover:bg-accent"
+                className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3.5 py-2.5 text-left hover:bg-accent transition-colors"
               >
                 <span className="min-w-0">
-                  <span className="block truncate font-display text-sm font-semibold uppercase">
+                  <span className="block truncate font-display text-sm sm:text-base font-bold uppercase text-foreground">
                     {p.name}
                     {p.soldByWeight && (
-                      <span className="ml-2 rounded-sm bg-warning/20 px-1 font-display text-[10px] font-bold uppercase text-warning-foreground">
+                      <span className="ml-2 rounded-sm bg-warning/20 px-1.5 py-0.5 font-display text-xs font-bold uppercase text-warning-foreground">
                         peso
                       </span>
                     )}
                   </span>
-                  <span className="num block text-xs text-muted-foreground">
+                  <span className="num block text-xs font-medium text-muted-foreground">
                     {p.code} · estoque {p.stock} {p.unit}
                   </span>
                 </span>
-                <span className="num shrink-0 text-sm font-semibold">
+                <span className="num shrink-0 text-sm sm:text-base font-extrabold text-primary">
                   {brl(p.price)}
                   {p.soldByWeight ? "/kg" : ""}
                 </span>

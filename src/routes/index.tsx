@@ -1,22 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
-  Boxes,
-  Clock,
-  DollarSign,
   Lock,
   LogIn,
-  Package,
-  Printer,
-  Scale,
   ShieldCheck,
-  ShoppingCart,
-  Sparkles,
   UserCheck,
-  Users,
-  Wallet,
-  Zap,
 } from "lucide-react";
 import { getStoredProducts, type Product } from "@/data/mock-products";
 import { useSalesSessions } from "@/hooks/useSalesSessions";
@@ -74,31 +63,22 @@ function HomePage() {
 }
 
 // ---------------------------------------------------------------------------
-// 1. Home Login & Abertura de Caixa Portal (Quando deslogado)
+// 1. Home Login Portal (Padrão idêntico ao /login quando não autenticado)
 // ---------------------------------------------------------------------------
 function HomeLoginPortal() {
-  const { login, openingFloat } = useAuth();
+  const { login } = useAuth();
   const [selectedUserId, setSelectedUserId] = useState<string>(MOCK_USERS[0].id);
   const [password, setPassword] = useState<string>("");
-  const [cashFloat, setCashFloat] = useState<string>(String(openingFloat || 100));
   const [loading, setLoading] = useState(false);
-  const [currentTime, setCurrentTime] = useState("");
-
-  useEffect(() => {
-    const update = () =>
-      setCurrentTime(
-        new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-      );
-    update();
-    const interval = setInterval(update, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const selectedUser = MOCK_USERS.find((u) => u.id === selectedUserId) ?? MOCK_USERS[0];
 
-  const handleSelectUser = (u: AuthUser) => {
-    setSelectedUserId(u.id);
-    setPassword(u.passwordHint);
+  const handleSelectUser = (id: string) => {
+    setSelectedUserId(id);
+    const u = MOCK_USERS.find((item) => item.id === id);
+    if (u) {
+      setPassword(u.passwordHint);
+    }
   };
 
   const handleQuickLogin = (u: AuthUser) => {
@@ -106,8 +86,8 @@ function HomeLoginPortal() {
     setPassword(u.passwordHint);
     setLoading(true);
     setTimeout(() => {
-      login(u.id, u.passwordHint, parseFloat(cashFloat) || 100);
-      toast.success(`Bem-vindo, ${u.name}! Caixa aberto.`);
+      login(u.id, u.passwordHint);
+      toast.success(`Bem-vindo, ${u.name}! (${u.roleLabel})`);
       setLoading(false);
     }, 250);
   };
@@ -117,311 +97,190 @@ function HomeLoginPortal() {
     setLoading(true);
 
     setTimeout(() => {
-      const floatVal = parseFloat(cashFloat.replace(",", ".")) || 100;
-      const success = login(selectedUserId, password || undefined, floatVal);
+      const success = login(selectedUserId, password || undefined);
       if (success) {
         toast.success(`Autenticado com sucesso como ${selectedUser.name}!`);
       } else {
         toast.error("Senha ou PIN incorreto. Tente 'admin123' ou '123456'.");
       }
       setLoading(false);
-    }, 350);
+    }, 300);
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col justify-between overflow-x-hidden bg-background">
-      {/* Background ambient glow */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-96 w-[40rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
-
-      {/* Top Header Bar */}
-      <header className="border-b border-border/80 bg-card/60 px-4 py-3 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-primary font-display text-base font-black text-primary-foreground shadow-md shadow-primary/20">
-              PD
-            </div>
-            <div>
-              <h1 className="font-display text-base font-bold leading-tight text-foreground">
-                MeuPDV
-              </h1>
-              <p className="text-[11px] text-muted-foreground">Mercadinho Central · Frente de Caixa & Gestão</p>
-            </div>
+    <div className="flex min-h-screen w-full items-center justify-center bg-radial from-background via-background to-muted/50 p-4">
+      <div className="w-full max-w-md space-y-6">
+        {/* Brand Header */}
+        <div className="flex flex-col items-center text-center">
+          <div className="mb-2 flex size-14 items-center justify-center rounded-2xl bg-primary font-display text-2xl font-black text-primary-foreground shadow-lg shadow-primary/20 ring-4 ring-primary/10">
+            PD
           </div>
-
-          <div className="flex items-center gap-4">
-            {/* System Live Status */}
-            <div className="hidden items-center gap-3 md:flex">
-              <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600">
-                <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
-                SEFAZ NFC-e Online
-              </div>
-              <div className="flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
-                <Printer className="size-3 text-primary" />
-                ESC/POS 80mm
-              </div>
-              <div className="flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
-                <Scale className="size-3 text-primary" />
-                Balança Pronta
-              </div>
-            </div>
-
-            {/* Clock */}
-            <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-foreground">
-              <Clock className="size-3.5 text-primary" />
-              <span>{currentTime || "00:00:00"}</span>
-            </div>
-          </div>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            MeuPDV
+          </h1>
+          <p className="text-xs text-muted-foreground sm:text-sm">
+            Frente de Caixa & Gestão Comercial Inteligente
+          </p>
         </div>
-      </header>
 
-      {/* Main Home Content */}
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 py-8">
-        <div className="grid w-full grid-cols-1 items-center gap-8 lg:grid-cols-12">
-          {/* Left Column: Welcome & Highlights */}
-          <div className="space-y-6 lg:col-span-6">
-            <div className="space-y-2">
-              <Badge variant="outline" className="border-primary/30 bg-primary/5 text-primary">
-                <Sparkles className="mr-1 size-3" /> Sistema Pronto para Vendas
-              </Badge>
-              <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-                Controle total do caixa em tempo real.
-              </h2>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                Selecione o operador ou administrador para iniciar a sessão de vendas, emitir NFC-e, receber via PIX e gerenciar o estoque.
-              </p>
-            </div>
+        {/* Login Card */}
+        <Card className="border-border/80 shadow-xl shadow-black/5">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="font-display text-lg font-bold">Identificação de Acesso</CardTitle>
+            <CardDescription className="text-xs">
+              Selecione o operador ou administrador para entrar no sistema.
+            </CardDescription>
+          </CardHeader>
 
-            {/* Feature Pills */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              <div className="rounded-lg border border-border bg-card/60 p-3 shadow-2xs">
-                <Zap className="mb-1.5 size-5 text-primary" />
-                <p className="text-xs font-bold text-foreground">PDV Ágil (F2)</p>
-                <p className="text-[10px] text-muted-foreground">Leitura rápida e pesagem</p>
-              </div>
-              <div className="rounded-lg border border-border bg-card/60 p-3 shadow-2xs">
-                <Wallet className="mb-1.5 size-5 text-emerald-600" />
-                <p className="text-xs font-bold text-foreground">PIX Instantâneo</p>
-                <p className="text-[10px] text-muted-foreground">QR Code dinâmico</p>
-              </div>
-              <div className="rounded-lg border border-border bg-card/60 p-3 shadow-2xs">
-                <ShieldCheck className="mb-1.5 size-5 text-blue-600" />
-                <p className="text-xs font-bold text-foreground">NFC-e Oficial</p>
-                <p className="text-[10px] text-muted-foreground">Autorização SEFAZ</p>
-              </div>
-            </div>
-
-            {/* Direct Modules Links for quick navigation */}
-            <div className="rounded-xl border border-border/80 bg-muted/20 p-4">
-              <p className="mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Módulos de Gestão Rápida:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Link
-                  to="/produtos"
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary shadow-2xs"
-                >
-                  <Package className="size-3.5 text-primary" />
-                  Catálogo de Produtos
-                </Link>
-                <Link
-                  to="/vendas"
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary shadow-2xs"
-                >
-                  <ShoppingCart className="size-3.5 text-primary" />
-                  Histórico de Vendas
-                </Link>
-                <Link
-                  to="/clientes"
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary shadow-2xs"
-                >
-                  <Users className="size-3.5 text-primary" />
-                  Clientes
-                </Link>
-                <Link
-                  to="/estoque"
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary shadow-2xs"
-                >
-                  <Boxes className="size-3.5 text-primary" />
-                  Estoque
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: Operator Login Card */}
-          <div className="w-full lg:col-span-6">
-            <Card className="border-border/80 shadow-xl shadow-black/5">
-              <CardHeader className="space-y-1 pb-4">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="font-display text-lg font-bold">Identificação do Operador</CardTitle>
-                  <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
-                    <span className="size-2 rounded-full bg-emerald-500" />
-                    Turno Disponível
-                  </span>
-                </div>
-                <CardDescription className="text-xs">
-                  Escolha o usuário e informe a senha ou PIN para liberar a frente de caixa.
-                </CardDescription>
-              </CardHeader>
-
-              <form onSubmit={handleSubmit}>
-                <CardContent className="space-y-4">
-                  {/* Operator Selection Cards */}
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Selecione o Usuário:</Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {MOCK_USERS.map((u) => {
-                        const isSelected = selectedUserId === u.id;
-                        return (
-                          <button
-                            key={u.id}
-                            type="button"
-                            onClick={() => handleSelectUser(u)}
-                            className={`flex flex-col items-start rounded-lg border p-2.5 text-left transition-all ${
-                              isSelected
-                                ? "border-primary bg-primary/10 ring-2 ring-primary/20 shadow-xs"
-                                : "border-border bg-card hover:bg-accent"
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              {/* Select User Dropdown */}
+              <div className="space-y-2">
+                <Label htmlFor="user-select" className="text-xs font-semibold">
+                  Selecione o Usuário
+                </Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {MOCK_USERS.map((u) => {
+                    const isSelected = selectedUserId === u.id;
+                    return (
+                      <button
+                        key={u.id}
+                        type="button"
+                        onClick={() => handleSelectUser(u.id)}
+                        className={`flex flex-col items-start rounded-lg border p-2.5 text-left transition-all ${
+                          isSelected
+                            ? "border-primary bg-primary/10 ring-2 ring-primary/20 shadow-xs"
+                            : "border-border bg-card hover:bg-accent"
+                        }`}
+                      >
+                        <div className="flex w-full items-center justify-between mb-1.5">
+                          <span
+                            className={`grid size-7 place-items-center rounded-md font-display text-xs font-bold ${
+                              u.role === "admin"
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-emerald-600 text-white"
                             }`}
                           >
-                            <div className="flex w-full items-center justify-between mb-1.5">
-                              <span
-                                className={`grid size-7 place-items-center rounded-md font-display text-xs font-bold ${
-                                  u.role === "admin"
-                                    ? "bg-primary text-primary-foreground"
-                                    : "bg-emerald-600 text-white"
-                                }`}
-                              >
-                                {u.avatarText}
-                              </span>
-                              <Badge
-                                variant={u.role === "admin" ? "default" : "secondary"}
-                                className="text-[9px] px-1.5 py-0"
-                              >
-                                {u.role === "admin" ? "Admin" : "Operador"}
-                              </Badge>
-                            </div>
-                            <p className="truncate font-semibold text-xs text-foreground">{u.name}</p>
-                            <p className="text-[10px] text-muted-foreground">{u.roleLabel}</p>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Password / PIN Input */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="home-password" className="text-xs font-semibold">
-                        Senha ou PIN de Acesso
-                      </Label>
-                      <button
-                        type="button"
-                        onClick={() => setPassword(selectedUser.passwordHint)}
-                        className="text-[11px] font-medium text-primary hover:underline"
-                      >
-                        Usar demo ({selectedUser.passwordHint})
-                      </button>
-                    </div>
-                    <div className="relative">
-                      <Lock className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        id="home-password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Digite a senha ou PIN..."
-                        className="h-10 pl-9 font-mono text-sm"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Opening Cash Float */}
-                  <div className="space-y-1.5 rounded-lg border border-border bg-muted/20 p-3">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="home-float" className="text-xs font-semibold flex items-center gap-1.5">
-                        <DollarSign className="size-3.5 text-emerald-600" />
-                        Fundo de Troco Inicial (Suprimento)
-                      </Label>
-                      <span className="text-[10px] text-muted-foreground">Valor em gaveta</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="relative flex-1">
-                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-muted-foreground">
-                          R$
-                        </span>
-                        <Input
-                          id="home-float"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={cashFloat}
-                          onChange={(e) => setCashFloat(e.target.value)}
-                          className="h-9 pl-9 font-mono text-xs font-bold text-foreground"
-                          placeholder="100.00"
-                        />
-                      </div>
-                      <div className="flex gap-1">
-                        {[50, 100, 200].map((v) => (
-                          <button
-                            key={v}
-                            type="button"
-                            onClick={() => setCashFloat(String(v))}
-                            className="rounded-md border border-border bg-card px-2 py-1 text-[10px] font-bold text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+                            {u.avatarText}
+                          </span>
+                          <Badge
+                            variant={u.role === "admin" ? "default" : "secondary"}
+                            className="text-[9px] px-1.5 py-0"
                           >
-                            R$ {v}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                            {u.role === "admin" ? "Admin" : "Operador"}
+                          </Badge>
+                        </div>
+                        <p className="truncate font-semibold text-xs text-foreground">{u.name}</p>
+                        <p className="text-[10px] text-muted-foreground">{u.roleLabel}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-                  {/* 1-Click Fast Demonstration Login */}
-                  <div className="pt-1">
-                    <p className="mb-1.5 text-[11px] font-medium text-muted-foreground">
-                      Acesso rápido com 1 clique:
-                    </p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-9 gap-1.5 text-xs font-medium justify-start"
-                        onClick={() => handleQuickLogin(MOCK_USERS[0])}
-                      >
-                        <ShieldCheck className="size-3.5 text-primary shrink-0" />
-                        <span className="truncate">Admin (Acesso Total)</span>
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-9 gap-1.5 text-xs font-medium justify-start"
-                        onClick={() => handleQuickLogin(MOCK_USERS[1])}
-                      >
-                        <UserCheck className="size-3.5 text-emerald-600 shrink-0" />
-                        <span className="truncate">Operador (Caixa)</span>
-                      </Button>
-                    </div>
+              {/* User Preview Badge */}
+              <div className="flex items-center justify-between rounded-lg border border-border bg-muted/40 p-3">
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className={`grid size-9 shrink-0 place-items-center rounded-md font-display text-xs font-bold ${
+                      selectedUser.role === "admin"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-emerald-600 text-white"
+                    }`}
+                  >
+                    {selectedUser.avatarText}
+                  </span>
+                  <div>
+                    <p className="text-xs font-bold leading-tight">{selectedUser.name}</p>
+                    <p className="text-[10px] text-muted-foreground">{selectedUser.email}</p>
                   </div>
-                </CardContent>
+                </div>
+                <Badge
+                  variant={selectedUser.role === "admin" ? "default" : "secondary"}
+                  className="text-[10px] font-bold uppercase tracking-wider"
+                >
+                  {selectedUser.role === "admin" ? "Admin" : "Operador"}
+                </Badge>
+              </div>
 
-                <CardFooter className="pt-2">
-                  <Button type="submit" size="lg" className="w-full gap-2 font-bold shadow-md shadow-primary/20" disabled={loading}>
-                    <LogIn className="size-4" />
-                    {loading ? "Abrindo caixa..." : "Abrir Caixa & Iniciar Vendas"}
+              {/* Password / PIN Input */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="home-password" className="text-xs font-semibold">
+                    Senha ou PIN de Acesso
+                  </Label>
+                  <button
+                    type="button"
+                    onClick={() => setPassword(selectedUser.passwordHint)}
+                    className="text-[10px] font-medium text-primary hover:underline"
+                  >
+                    Preencher demo ({selectedUser.passwordHint})
+                  </button>
+                </div>
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="home-password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Digite a senha..."
+                    className="h-10 pl-9 font-mono text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Fast 1-Click Access Buttons */}
+              <div className="pt-1">
+                <p className="mb-2 text-[11px] font-medium text-muted-foreground">
+                  Acesso rápido para demonstração:
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-auto flex-col items-start gap-1 py-2 text-left"
+                    onClick={() => handleQuickLogin(MOCK_USERS[0])}
+                  >
+                    <span className="flex items-center gap-1.5 font-display text-xs font-bold text-primary">
+                      <ShieldCheck className="size-3.5" />
+                      Administrador
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">Acesso Total</span>
                   </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </div>
-        </div>
-      </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border/80 bg-card/40 px-4 py-3 text-center text-xs text-muted-foreground">
-        <p>© 2026 MeuPDV — Sistema de Frente de Caixa e Automação Comercial</p>
-      </footer>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-auto flex-col items-start gap-1 py-2 text-left"
+                    onClick={() => handleQuickLogin(MOCK_USERS[1])}
+                  >
+                    <span className="flex items-center gap-1.5 font-display text-xs font-bold text-emerald-600">
+                      <UserCheck className="size-3.5" />
+                      Operador
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">Caixa & Vendas</span>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+
+            <CardFooter className="pt-2">
+              <Button type="submit" className="w-full gap-2 font-semibold" disabled={loading}>
+                <LogIn className="size-4" />
+                {loading ? "Entrando..." : "Entrar no Sistema"}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+
+        {/* Footer info */}
+        <div className="text-center text-xs text-muted-foreground">
+          <p>© 2026 MeuPDV — Sistema de Frente de Caixa e Gestão Comercial</p>
+        </div>
+      </div>
     </div>
   );
 }
