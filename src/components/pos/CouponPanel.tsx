@@ -127,7 +127,7 @@ export function CouponPanel({
                   <button
                     type="button"
                     aria-label={`Diminuir quantidade de ${item.name}`}
-                    className="size-5 rounded border border-[#c9caa0] bg-white/90 text-foreground hover:bg-primary hover:text-white flex items-center justify-center transition-colors shadow-2xs font-bold"
+                    className="size-5 rounded border border-border bg-background text-foreground hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors shadow-2xs font-bold"
                     onClick={(e) => {
                       e.stopPropagation();
                       onChangeQuantity(item.id, item.unit === "KG" ? -0.1 : -1);
@@ -142,7 +142,7 @@ export function CouponPanel({
                   <button
                     type="button"
                     aria-label={`Aumentar quantidade de ${item.name}`}
-                    className="size-5 rounded border border-[#c9caa0] bg-white/90 text-foreground hover:bg-primary hover:text-white flex items-center justify-center transition-colors shadow-2xs font-bold"
+                    className="size-5 rounded border border-border bg-background text-foreground hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors shadow-2xs font-bold"
                     onClick={(e) => {
                       e.stopPropagation();
                       onChangeQuantity(item.id, item.unit === "KG" ? 0.1 : 1);
