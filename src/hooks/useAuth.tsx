@@ -4,6 +4,7 @@ import { MOCK_USERS, type AuthUser } from "@/data/mock-auth";
 interface AuthContextType {
   user: AuthUser | null;
   isAuthenticated: boolean;
+  hydrated: boolean;
   isShiftOpen: boolean;
   openingFloat: number;
   login: (userId: string, passwordOrPin?: string, initialFloat?: number) => boolean;
@@ -120,6 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         isAuthenticated: !!user,
+        hydrated,
         isShiftOpen,
         openingFloat,
         login,
