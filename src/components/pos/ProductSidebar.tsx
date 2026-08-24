@@ -59,11 +59,11 @@ export function ProductSidebar({
         )}
       </div>
 
-      <div className="grid min-h-0 place-items-center overflow-hidden rounded-xl border border-border bg-surface p-4 shadow-2xs">
+      <div className="min-h-0 overflow-hidden rounded-xl border border-border bg-surface p-3 shadow-2xs">
         <img
           src={imageUrl || productPlaceholder}
           alt={productName ? `Imagem do produto ${productName}` : "Imagem do produto"}
-          className="max-h-full max-w-full rounded-lg object-contain"
+          className="block size-full rounded-lg object-contain object-center"
           loading="lazy"
         />
       </div>
