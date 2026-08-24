@@ -20,30 +20,47 @@ export type CashShift = {
 
 const CURRENT_SHIFT_KEY = "meupdv_current_shift_v2";
 const SHIFT_HISTORY_KEY = "meupdv_shift_history_v2";
+const SHIFT_SEEDED_KEY = "meupdv_shift_seeded_v2";
 
 export function getCurrentShift(): CashShift | null {
   if (typeof window === "undefined") return null;
   const saved = localStorage.getItem(CURRENT_SHIFT_KEY);
-  if (!saved) {
-    // Default open shift with initial float if not set
-    const defaultShift: CashShift = {
-      id: `shift-init-${Date.now()}`,
-      openedAt: new Date().toISOString(),
-      operatorId: "u1",
-      operatorName: "Administrador Geral",
-      initialFloat: 100,
-      cashSalesTotal: 0,
-      pixSalesTotal: 0,
-      cardDebitSalesTotal: 0,
-      cardCreditSalesTotal: 0,
-      totalSales: 0,
-      status: "OPEN",
-    };
-    saveCurrentShift(defaultShift);
-    return defaultShift;
+
+  // If explicitly closed or saved as "null"
+  if (saved === "null") {
+    return null;
   }
+
+  if (!saved) {
+    const isSeeded = localStorage.getItem(SHIFT_SEEDED_KEY);
+    if (!isSeeded) {
+      // Default open shift with initial float on first ever application launch
+      localStorage.setItem(SHIFT_SEEDED_KEY, "true");
+      const defaultShift: CashShift = {
+        id: `shift-init-${Date.now()}`,
+        openedAt: new Date().toISOString(),
+        operatorId: "u1",
+        operatorName: "Administrador Geral",
+        initialFloat: 100,
+        cashSalesTotal: 0,
+        pixSalesTotal: 0,
+        cardDebitSalesTotal: 0,
+        cardCreditSalesTotal: 0,
+        totalSales: 0,
+        status: "OPEN",
+      };
+      saveCurrentShift(defaultShift);
+      return defaultShift;
+    }
+    return null;
+  }
+
   try {
-    return JSON.parse(saved);
+    const parsed = JSON.parse(saved);
+    if (!parsed || parsed.status !== "OPEN") {
+      return null;
+    }
+    return parsed;
   } catch {
     return null;
   }
@@ -51,8 +68,10 @@ export function getCurrentShift(): CashShift | null {
 
 export function saveCurrentShift(shift: CashShift | null): void {
   if (typeof window === "undefined") return;
-  if (!shift) {
-    localStorage.removeItem(CURRENT_SHIFT_KEY);
+  // Mark that system has been initialized so it won't re-seed an open shift
+  localStorage.setItem(SHIFT_SEEDED_KEY, "true");
+  if (!shift || shift.status !== "OPEN") {
+    localStorage.setItem(CURRENT_SHIFT_KEY, "null");
   } else {
     localStorage.setItem(CURRENT_SHIFT_KEY, JSON.stringify(shift));
   }

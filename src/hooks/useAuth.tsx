@@ -1,11 +1,17 @@
-import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { MOCK_USERS, type AuthUser } from "@/data/mock-auth";
+import {
+  getCurrentShift,
+  saveCurrentShift,
+  type CashShift,
+} from "@/data/mock-cash-shift";
 
 interface AuthContextType {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isShiftOpen: boolean;
   openingFloat: number;
+  currentShift: CashShift | null;
   login: (userId: string, passwordOrPin?: string, initialFloat?: number) => boolean;
   logout: () => void;
   switchUser: (userId: string) => void;
@@ -17,7 +23,6 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_STORAGE_KEY = "meupdv_current_user_id";
-const SHIFT_STORAGE_KEY = "meupdv_shift_status_v1";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => {
@@ -28,24 +33,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return found ?? null;
   });
 
-  const [isShiftOpen, setIsShiftOpen] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      const raw = localStorage.getItem(SHIFT_STORAGE_KEY);
-      return raw ? !!JSON.parse(raw).isOpen : false;
-    } catch {
-      return false;
-    }
-  });
-  const [openingFloat, setOpeningFloat] = useState<number>(() => {
-    if (typeof window === "undefined") return 0;
-    try {
-      const raw = localStorage.getItem(SHIFT_STORAGE_KEY);
-      return raw ? Number(JSON.parse(raw).openingFloat) || 0 : 0;
-    } catch {
-      return 0;
-    }
-  });
+  const [activeShift, setActiveShift] = useState<CashShift | null>(() => getCurrentShift());
+
+  const syncShift = useCallback(() => {
+    setActiveShift(getCurrentShift());
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("meupdv_shift_updated", syncShift);
+    return () => {
+      window.removeEventListener("meupdv_shift_updated", syncShift);
+    };
+  }, [syncShift]);
 
   useEffect(() => {
     if (user) {
@@ -57,17 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       window.dispatchEvent(new Event("meupdv_auth_changed"));
     }
   }, [user]);
-
-  const persistShift = (open: boolean, floatVal: number) => {
-    setIsShiftOpen(open);
-    setOpeningFloat(floatVal);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(
-        SHIFT_STORAGE_KEY,
-        JSON.stringify({ isOpen: open, openingFloat: floatVal, openedAt: new Date().toISOString() })
-      );
-    }
-  };
 
   const login = (userId: string, passwordOrPin?: string, initialFloat?: number): boolean => {
     const targetUser = MOCK_USERS.find((u) => u.id === userId);
@@ -87,8 +75,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setUser(targetUser);
-    if (initialFloat !== undefined) {
-      persistShift(true, initialFloat);
+    if (initialFloat !== undefined && initialFloat > 0) {
+      const existing = getCurrentShift();
+      if (!existing || existing.status !== "OPEN") {
+        const newShift: CashShift = {
+          id: `shift-${Date.now()}`,
+          openedAt: new Date().toISOString(),
+          operatorId: targetUser.id,
+          operatorName: targetUser.name,
+          initialFloat,
+          cashSalesTotal: 0,
+          pixSalesTotal: 0,
+          cardDebitSalesTotal: 0,
+          cardCreditSalesTotal: 0,
+          totalSales: 0,
+          status: "OPEN",
+        };
+        saveCurrentShift(newShift);
+        setActiveShift(newShift);
+      }
     }
     return true;
   };
@@ -109,13 +114,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const openShift = (floatAmount: number) => {
-    persistShift(true, floatAmount);
+    const newShift: CashShift = {
+      id: `shift-${Date.now()}`,
+      openedAt: new Date().toISOString(),
+      operatorId: user?.id ?? "u1",
+      operatorName: user?.name ?? "Operador",
+      initialFloat: floatAmount,
+      cashSalesTotal: 0,
+      pixSalesTotal: 0,
+      cardDebitSalesTotal: 0,
+      cardCreditSalesTotal: 0,
+      totalSales: 0,
+      status: "OPEN",
+    };
+    saveCurrentShift(newShift);
+    setActiveShift(newShift);
   };
 
   const closeShift = () => {
-    persistShift(false, 0);
+    saveCurrentShift(null);
+    setActiveShift(null);
   };
 
+  const isShiftOpen = activeShift?.status === "OPEN";
+  const openingFloat = activeShift?.initialFloat ?? 0;
   const isAdmin = user?.role === "admin";
 
   return (
@@ -125,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!user,
         isShiftOpen,
         openingFloat,
+        currentShift: activeShift,
         login,
         logout,
         switchUser,

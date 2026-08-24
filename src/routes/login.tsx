@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { MOCK_USERS, type AuthUser } from "@/data/mock-auth";
 import { useAuth } from "@/hooks/useAuth";
+import { useSettings } from "@/hooks/useSettings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +42,7 @@ const DEFAULT_USER = MOCK_USERS[0]!;
 
 function LoginPage() {
   const { user, login } = useAuth();
+  const { saved: settings } = useSettings();
   const navigate = useNavigate();
 
   const [selectedUserId, setSelectedUserId] = useState<string>(user?.id ?? DEFAULT_USER.id);
@@ -90,11 +92,19 @@ function LoginPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center">
-          <div className="mb-2 flex size-14 items-center justify-center rounded-2xl bg-primary font-display text-2xl font-black text-primary-foreground shadow-lg shadow-primary/20 ring-4 ring-primary/10">
-            PD
-          </div>
+          {settings.logoUrl ? (
+            <img
+              src={settings.logoUrl}
+              alt={settings.tradeName || "Logo"}
+              className="mb-2 size-16 rounded-2xl object-contain bg-white p-1.5 shadow-lg shadow-primary/20 ring-4 ring-primary/10"
+            />
+          ) : (
+            <div className="mb-2 flex size-14 items-center justify-center rounded-2xl bg-primary font-display text-2xl font-black text-primary-foreground shadow-lg shadow-primary/20 ring-4 ring-primary/10">
+              PD
+            </div>
+          )}
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            MeuPDV
+            {settings.tradeName || "MeuPDV"}
           </h1>
           <p className="text-xs text-muted-foreground sm:text-sm">
             Frente de Caixa & Gestão Comercial Inteligente

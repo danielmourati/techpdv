@@ -1,21 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   Building2,
   CheckCircle2,
   FileCode,
+  Image as ImageIcon,
   Key,
   Lock,
+  Palette,
   Printer,
   Save,
   Scale,
   Settings,
   ShieldCheck,
   Store,
+  Trash2,
+  Upload,
   UserCheck,
   UserPlus,
-  Palette,
   Users,
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -52,6 +55,7 @@ function ConfiguracoesPage() {
   const { settings, dirty, update, save, discard } = useSettings();
   const [users, setUsers] = useState<AuthUser[]>(MOCK_USERS);
   const [isTestingScale, setIsTestingScale] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const setSettings = (next: StoreSettings) => update(next);
 
@@ -64,6 +68,36 @@ function ConfiguracoesPage() {
   const handleDiscard = () => {
     discard();
     toast.info("Alterações descartadas.");
+  };
+
+  const handleLogoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("O arquivo de imagem deve ter no máximo 2MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      setSettings({ ...settings, logoUrl: base64 });
+      toast.success("Logo carregada com sucesso! Lembre-se de clicar em Salvar Alterações.");
+    };
+    reader.onerror = () => {
+      toast.error("Erro ao ler o arquivo de imagem selecionado.");
+    };
+    reader.readAsDataURL(file);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveLogo = () => {
+    setSettings({ ...settings, logoUrl: "" });
+    toast.info("Logotipo removido. As iniciais padrão da loja serão utilizadas.");
   };
 
   const handleTestScale = () => {
@@ -143,7 +177,104 @@ function ConfiguracoesPage() {
                   Informações impressas no cabeçalho do cupom e utilizadas na emissão fiscal.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4 text-xs">
+              <CardContent className="space-y-5 text-xs">
+                {/* Seção de Logotipo do Estabelecimento */}
+                <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="cfg-logo-url" className="text-xs font-bold text-foreground">
+                        Logo do Estabelecimento (URL ou Upload)
+                      </Label>
+                      <p className="text-[11px] text-muted-foreground">
+                        Personalize a logo exibida no menu lateral, na tela de login e nos comprovantes.
+                      </p>
+                    </div>
+                    {settings.logoUrl && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemoveLogo}
+                        className="h-7 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive gap-1 cursor-pointer"
+                      >
+                        <Trash2 className="size-3.5" />
+                        Remover Logo
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    {/* Live Preview Box */}
+                    <div className="flex items-center gap-3">
+                      <div className="relative shrink-0">
+                        {settings.logoUrl ? (
+                          <div className="size-16 rounded-xl border border-border bg-white p-1 shadow-xs flex items-center justify-center overflow-hidden">
+                            <img
+                              src={settings.logoUrl}
+                              alt="Logo da Loja"
+                              className="max-h-full max-w-full object-contain"
+                            />
+                          </div>
+                        ) : (
+                          <div className="size-16 rounded-xl bg-primary font-display text-xl font-black text-primary-foreground shadow-xs flex items-center justify-center">
+                            PD
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-left">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                          Pré-visualização
+                        </span>
+                        <p className="text-xs font-semibold text-foreground">
+                          {settings.logoUrl ? "Logotipo Ativo" : "Iniciais Padrão (PD)"}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {settings.logoUrl ? "Imagem configurada" : "Sem logotipo carregado"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Inputs: URL e Botão de Upload */}
+                    <div className="flex-1 w-full space-y-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <div className="relative flex-1">
+                          <Input
+                            id="cfg-logo-url"
+                            value={settings.logoUrl ?? ""}
+                            onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value })}
+                            placeholder="https://... (deixe vazio para usar as Iniciais)"
+                            className="h-9 text-xs font-mono"
+                          />
+                        </div>
+
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          accept="image/png, image/jpeg, image/webp, image/svg+xml"
+                          className="hidden"
+                          onChange={handleLogoFileUpload}
+                        />
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="h-9 shrink-0 gap-1.5 text-xs font-semibold cursor-pointer"
+                        >
+                          <Upload className="size-3.5 text-primary" />
+                          Escolher Imagem
+                        </Button>
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-between gap-1 text-[10px] text-muted-foreground">
+                        <span>Formatos aceitos: PNG, JPG, SVG, WebP (Máx: 2MB)</span>
+                        <span className="italic">Dica: imagens quadradas ou com fundo transparente</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div className="space-y-1">
                     <Label htmlFor="cfg-comp" className="text-xs font-semibold">

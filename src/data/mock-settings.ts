@@ -1,8 +1,9 @@
 import { DEFAULT_THEME, type ThemeId } from "./theme-palettes";
 
 export type StoreSettings = {
-  // Aparência
+  // Identidade Visual & Aparência
   theme: ThemeId;
+  logoUrl?: string;
 
   // Dados da Empresa
 
@@ -44,6 +45,7 @@ export type StoreSettings = {
 
 const INITIAL_SETTINGS: StoreSettings = {
   theme: DEFAULT_THEME,
+  logoUrl: "",
 
   companyName: "Mercadinho Central de Alimentos Ltda",
   tradeName: "MeuPDV - Mercadinho Central",

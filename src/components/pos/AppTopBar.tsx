@@ -59,22 +59,40 @@ export function AppTopBar({
             <button
               type="button"
               onClick={() => setCashModalOpen(true)}
-              className={`hidden shrink-0 rounded-lg border px-3 py-1.5 text-right transition-all sm:flex sm:items-center sm:gap-2.5 ${
+              className={`hidden shrink-0 rounded-lg border px-3 py-1.5 text-right transition-all sm:flex sm:items-center sm:gap-2.5 cursor-pointer ${
                 isShiftOpen
                   ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-2xs"
-                  : "border-amber-500/40 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20"
+                  : "border-amber-500/40 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 shadow-2xs"
               }`}
-              title="Clique para conferir ou fechar o caixa"
+              title={isShiftOpen ? "Clique para conferir ou fechar o caixa" : "Clique para abrir o caixa"}
             >
-              <div className="flex size-7 items-center justify-center rounded-md bg-emerald-500/20">
-                <Banknote className="size-4 text-emerald-600" />
+              <div
+                className={`flex size-7 items-center justify-center rounded-md ${
+                  isShiftOpen ? "bg-emerald-500/20 text-emerald-600" : "bg-amber-500/20 text-amber-600"
+                }`}
+              >
+                {isShiftOpen ? (
+                  <Banknote className="size-4" />
+                ) : (
+                  <Wallet className="size-4" />
+                )}
               </div>
               <div className="text-right">
-                <p className="font-display text-xs font-bold uppercase tracking-wider text-emerald-600">
+                <p
+                  className={`font-display text-[11px] font-bold uppercase tracking-wider ${
+                    isShiftOpen ? "text-emerald-600" : "text-amber-600"
+                  }`}
+                >
                   {isShiftOpen ? "Caixa Aberto" : "Caixa Fechado"}
                 </p>
-                <p className="num font-display text-base font-extrabold leading-tight text-emerald-600">
-                  {brl(shiftSales.expectedCashInDrawer || cashTotal)}
+                <p
+                  className={`num font-display text-sm font-extrabold leading-tight ${
+                    isShiftOpen ? "text-emerald-600" : "text-amber-600"
+                  }`}
+                >
+                  {isShiftOpen
+                    ? brl(shiftSales.expectedCashInDrawer || cashTotal)
+                    : "Clique p/ Abrir"}
                 </p>
               </div>
             </button>
