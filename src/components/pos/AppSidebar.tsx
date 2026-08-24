@@ -96,19 +96,32 @@ export function AppSidebar() {
           : "border-r border-primary/30 bg-primary text-primary-foreground"
       }
     >
-      <SidebarHeader className={`p-3 border-b ${collapsed ? "border-border bg-card" : "border-white/15 bg-primary"}`}>
+      <SidebarHeader
+        className={`border-b transition-all ${
+          collapsed
+            ? "border-border bg-card p-2 flex items-center justify-center"
+            : "border-white/15 bg-primary p-3"
+        }`}
+      >
         <Link
           to="/"
-          className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 px-1 py-0.5 transition-opacity hover:opacity-90"
+          className={`flex items-center transition-opacity hover:opacity-90 ${
+            collapsed
+              ? "justify-center size-10"
+              : "grid grid-cols-[auto_minmax(0,1fr)] gap-2.5 px-1 py-0.5"
+          }`}
+          title={settings.tradeName || "MeuPDV"}
         >
           {settings.logoUrl ? (
-            <img
-              src={settings.logoUrl}
-              alt={settings.tradeName || "Logo"}
-              className="size-9 shrink-0 rounded-lg bg-white object-contain p-0.5 shadow-md"
-            />
+            <div className="size-9.5 shrink-0 rounded-lg bg-white p-0.5 shadow-xs border border-border/50 flex items-center justify-center overflow-hidden">
+              <img
+                src={settings.logoUrl}
+                alt={settings.tradeName || "Logo"}
+                className="size-full object-contain"
+              />
+            </div>
           ) : (
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white font-display text-base font-black text-primary shadow-md">
+            <span className="grid size-9.5 shrink-0 place-items-center rounded-lg bg-white font-display text-base font-black text-primary shadow-xs border border-border/40">
               PD
             </span>
           )}
@@ -128,7 +141,11 @@ export function AppSidebar() {
       <SidebarContent className={`p-2 ${collapsed ? "bg-card" : "bg-primary"}`}>
         {GROUPS.map((group) => (
           <SidebarGroup key={group.label} className="py-1">
-            <SidebarGroupLabel className={`text-xs font-bold uppercase tracking-wider px-2 mb-1 ${collapsed ? "text-muted-foreground" : "text-white/75"}`}>
+            <SidebarGroupLabel
+              className={`text-xs font-bold uppercase tracking-wider px-2 mb-1 ${
+                collapsed ? "text-muted-foreground" : "text-white/75"
+              }`}
+            >
               {group.label}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -139,29 +156,42 @@ export function AppSidebar() {
 
                   return (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild isActive={isActive} tooltip={item.title} className="h-10">
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        tooltip={item.title}
+                        className="h-10 cursor-pointer"
+                      >
                         <Link
                           to={item.to}
-                          className={`flex items-center gap-3 px-3 py-2 text-sm transition-all rounded-lg ${isActive
-                              ? collapsed
-                                ? "bg-primary font-bold text-primary-foreground shadow-sm"
-                                : "bg-white font-bold text-primary shadow-sm"
-                              : collapsed
-                                ? "text-muted-foreground hover:bg-accent hover:text-foreground font-medium"
-                                : "text-white/90 hover:bg-white/15 hover:text-white font-medium"
-                            }`}
+                          className={`flex items-center text-sm transition-all rounded-lg ${
+                            collapsed
+                              ? `justify-center size-10 px-0 ${
+                                  isActive
+                                    ? "bg-primary font-bold text-primary-foreground shadow-sm"
+                                    : "text-muted-foreground hover:bg-accent hover:text-foreground font-medium"
+                                }`
+                              : `gap-3 px-3 py-2 ${
+                                  isActive
+                                    ? "bg-white font-bold text-primary shadow-sm"
+                                    : "text-white/90 hover:bg-white/15 hover:text-white font-medium"
+                                }`
+                          }`}
                         >
                           <item.icon
-                            className={`size-4.5 shrink-0 ${isActive
+                            className={`size-5 shrink-0 ${
+                              isActive
                                 ? collapsed
                                   ? "text-primary-foreground"
                                   : "text-primary"
                                 : collapsed
                                   ? "text-muted-foreground"
                                   : "text-white/80"
-                              }`}
+                            }`}
                           />
-                          <span className="truncate text-sm font-semibold">{item.title}</span>
+                          {!collapsed && (
+                            <span className="truncate text-sm font-semibold">{item.title}</span>
+                          )}
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -173,16 +203,25 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
 
-      <SidebarFooter className={`p-2.5 border-t ${collapsed ? "border-border bg-card" : "border-white/15 bg-primary"}`}>
+      <SidebarFooter
+        className={`border-t transition-all ${
+          collapsed
+            ? "border-border bg-card p-2 flex items-center justify-center"
+            : "border-white/15 bg-primary p-2.5"
+        }`}
+      >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className={`grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 rounded-lg border p-2 text-left transition-colors focus:outline-none ${collapsed ? "border-border bg-muted/50 hover:bg-accent" : "border-white/20 bg-black/15 hover:bg-black/25"}`}
+              className={`rounded-lg border transition-colors focus:outline-none flex items-center cursor-pointer ${
+                collapsed
+                  ? "border-border bg-muted/50 hover:bg-accent justify-center size-10 p-0"
+                  : "border-white/20 bg-black/15 hover:bg-black/25 w-full grid grid-cols-[auto_minmax(0,1fr)] gap-2.5 p-2 text-left"
+              }`}
+              title={user?.name ?? "Usuário"}
             >
-              <span
-                className="grid size-8.5 shrink-0 place-items-center rounded-md bg-primary font-display text-xs font-bold text-primary-foreground shadow-xs"
-              >
+              <span className="grid size-8.5 shrink-0 place-items-center rounded-md bg-primary font-display text-xs font-bold text-primary-foreground shadow-xs">
                 {user ? user.avatarText : <UserRound className="size-4" />}
               </span>
               {!collapsed && (

@@ -497,13 +497,15 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
           <main className="grid min-h-0 flex-1 gap-2 overflow-hidden p-2 lg:grid-cols-[16rem_minmax(0,1fr)_22rem] 2xl:grid-cols-[18rem_minmax(0,1fr)_24rem]">
             <div className="hidden min-h-0 lg:grid">
               <ProductSidebar
-                productName={sales.currentItem?.name}
-                imageUrl={currentProduct?.imageUrl}
-                stock={currentProduct?.stock ?? 0}
-                unit={currentProduct?.unit ?? "UN"}
-                unitValue={sales.currentItem?.price ?? 0}
+                productName={weightProduct ? weightProduct.name : sales.currentItem?.name}
+                imageUrl={weightProduct ? weightProduct.imageUrl : currentProduct?.imageUrl}
+                stock={weightProduct ? weightProduct.stock : (currentProduct?.stock ?? 0)}
+                unit={weightProduct ? weightProduct.unit : (currentProduct?.unit ?? "UN")}
+                unitValue={weightProduct ? weightProduct.price : (sales.currentItem?.price ?? 0)}
                 itemValue={
-                  sales.currentItem ? sales.currentItem.price * sales.currentItem.quantity : 0
+                  weightProduct
+                    ? (suggestedWeight ? suggestedWeight * weightProduct.price : weightProduct.price)
+                    : (sales.currentItem ? sales.currentItem.price * sales.currentItem.quantity : 0)
                 }
                 status={(sales.active?.items.length ?? 0) > 0 ? "Caixa ocupado" : "Caixa livre"}
               />
