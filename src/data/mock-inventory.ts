@@ -113,6 +113,7 @@ export function registerStockMovement(
   if (productIndex === -1) return false;
 
   const product = products[productIndex];
+  if (!product) return false;
   const previousStock = product.stock;
   let newStock = previousStock;
 
