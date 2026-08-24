@@ -1,6 +1,8 @@
 import { TriangleAlert } from "lucide-react";
 import productPlaceholder from "@/assets/product-placeholder.jpg";
 import { brl } from "@/lib/format";
+import { useSettings } from "@/hooks/useSettings";
+
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
@@ -31,9 +33,24 @@ export function ProductSidebar({
   status: string;
 }) {
   const isOccupied = status.toLowerCase().includes("ocupado");
+  const { saved: settings } = useSettings();
 
   return (
-    <aside className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2.5">
+    <aside className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] gap-2.5">
+      <div className="grid h-24 place-items-center overflow-hidden rounded-xl border border-border bg-card p-3 shadow-2xs">
+        {settings.logoUrl ? (
+          <img
+            src={settings.logoUrl}
+            alt={`Logo ${settings.tradeName}`}
+            className="max-h-full max-w-full object-contain"
+          />
+        ) : (
+          <span className="truncate px-2 text-center font-display text-lg font-black uppercase tracking-wide text-primary">
+            {settings.tradeName || "MeuPDV"}
+          </span>
+        )}
+      </div>
+
       <div className="grid min-h-0 place-items-center overflow-hidden rounded-xl border border-border bg-surface p-4 shadow-2xs">
         <img
           src={imageUrl || productPlaceholder}
@@ -42,6 +59,7 @@ export function ProductSidebar({
           loading="lazy"
         />
       </div>
+
 
       <div className="grid gap-2">
         <InfoRow label="Estoque" value={`${stock} ${unit}`} />
