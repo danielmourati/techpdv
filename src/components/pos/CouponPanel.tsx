@@ -4,6 +4,7 @@ import type { SaleItem } from "@/data/mock-sales";
 import { brl, qty } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/hooks/useSettings";
 
 export function CouponPanel({
   items,
@@ -28,6 +29,7 @@ export function CouponPanel({
   onCash: () => void;
   onPix: () => void;
 }) {
+  const { saved: settings } = useSettings();
   return (
     <section className="grid h-full min-h-0 grid-rows-[auto_auto_minmax(0,1fr)_auto] overflow-hidden rounded-md border border-border bg-card">
       <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border px-3 py-2">
@@ -157,7 +159,7 @@ export function CouponPanel({
             Cliente
           </span>
           <span className="shrink-0 font-display text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
-            Consumidor final
+            {settings.askCustomerIdentification ? "Informar CPF/CNPJ" : "Consumidor final"}
           </span>
         </div>
 
@@ -180,6 +182,12 @@ export function CouponPanel({
             <span className="text-[10px] leading-tight opacity-80">F10 ou Enter</span>
           </span>
         </Button>
+
+        {settings.receiptFooterMessage && (
+          <p className="truncate px-1 text-center text-[10px] italic text-muted-foreground">
+            {settings.receiptFooterMessage}
+          </p>
+        )}
 
         <div className="grid grid-cols-2 gap-2">
           <Button

@@ -33,11 +33,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import {
-  getStoredSettings,
-  saveStoredSettings,
-  type StoreSettings,
-} from "@/data/mock-settings";
+import type { StoreSettings } from "@/data/mock-settings";
+import { useSettings } from "@/hooks/useSettings";
 import { MOCK_USERS, type AuthUser } from "@/data/mock-auth";
 import { ThemePicker } from "@/components/pos/ThemePicker";
 
@@ -52,18 +49,21 @@ export const Route = createFileRoute("/configuracoes")({
 });
 
 function ConfiguracoesPage() {
-  const [settings, setSettings] = useState<StoreSettings>(getStoredSettings());
+  const { settings, dirty, update, save, discard } = useSettings();
   const [users, setUsers] = useState<AuthUser[]>(MOCK_USERS);
   const [isTestingScale, setIsTestingScale] = useState(false);
 
-  useEffect(() => {
-    setSettings(getStoredSettings());
-  }, []);
+  const setSettings = (next: StoreSettings) => update(next);
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
-    saveStoredSettings(settings);
-    toast.success("Configurações atualizadas com sucesso!");
+    save();
+    toast.success("Configurações salvas e aplicadas no sistema!");
+  };
+
+  const handleDiscard = () => {
+    discard();
+    toast.info("Alterações descartadas.");
   };
 
   const handleTestScale = () => {
@@ -682,8 +682,25 @@ function ConfiguracoesPage() {
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end pt-2">
-          <Button type="submit" size="sm" className="gap-1.5">
+        <div className="sticky bottom-0 -mx-1 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/95 px-1 py-3 backdrop-blur">
+          <span
+            className={`mr-auto text-xs font-medium ${
+              dirty ? "text-amber-600" : "text-muted-foreground"
+            }`}
+          >
+            {dirty ? "Você tem alterações não salvas" : "Todas as configurações estão salvas"}
+          </span>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="gap-1.5"
+            disabled={!dirty}
+            onClick={handleDiscard}
+          >
+            Descartar alterações
+          </Button>
+          <Button type="submit" size="sm" className="gap-1.5" disabled={!dirty}>
             <Save className="size-4" />
             Salvar Todas as Configurações
           </Button>

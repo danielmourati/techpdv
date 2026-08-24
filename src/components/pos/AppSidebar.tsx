@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { MOCK_USERS } from "@/data/mock-auth";
+import { useSettings } from "@/hooks/useSettings";
 
 type Item = { title: string; icon: typeof LayoutGrid; to: string };
 
@@ -74,6 +75,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { user, logout, switchUser } = useAuth();
+  const { saved: settings } = useSettings();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
 
@@ -93,7 +95,7 @@ export function AppSidebar() {
                 MeuPDV
               </span>
               <span className="block truncate text-[11px] text-muted-foreground">
-                Mercadinho Central
+                {settings.companyName}
               </span>
             </span>
           )}

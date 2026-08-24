@@ -5,6 +5,15 @@ import { brl, qty } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useSettings } from "@/hooks/useSettings";
+
+const SCALE_LABELS: Record<string, string> = {
+  TOLEDO_PRIX3: "Toledo Prix 3",
+  FILIZOLA_PLATINA: "Filizola Platina",
+  ELGIN_DP30: "Elgin DP-30",
+  URANO_POP: "Urano POP",
+  GENERIC: "Balança genérica",
+};
 
 const PADS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "0", "⌫"];
 
@@ -19,6 +28,7 @@ export function WeightPromptModal({
   onOpenChange: (open: boolean) => void;
   onConfirm: (product: Product, weight: number) => void;
 }) {
+  const { saved: settings } = useSettings();
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -55,6 +65,10 @@ export function WeightPromptModal({
           </p>
           <p className="num text-xs text-muted-foreground">
             {product?.code} · {brl(product?.price ?? 0)} / kg
+          </p>
+          <p className="mt-1 text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
+            Balança: {SCALE_LABELS[settings.scaleModel] ?? settings.scaleModel} ·{" "}
+            {settings.scalePort} · {settings.scaleBaudRate} bps
           </p>
         </div>
 

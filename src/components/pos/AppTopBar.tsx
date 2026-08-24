@@ -12,10 +12,11 @@ import {
 import { brl } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
 import { MOCK_USERS } from "@/data/mock-auth";
+import { useSettings } from "@/hooks/useSettings";
 
 export function AppTopBar({
   title = "Frente de Caixa",
-  store = "Mercadinho Central - MeuPDV",
+  store,
   cashTotal = 0,
   showCashPill = true,
 }: {
@@ -25,6 +26,8 @@ export function AppTopBar({
   showCashPill?: boolean;
 }) {
   const { user, logout, switchUser } = useAuth();
+  const { saved: settings } = useSettings();
+  const storeLabel = store ?? settings.tradeName;
 
   return (
     <header className="grid shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-card px-3 py-2 shadow-xs">
@@ -34,7 +37,7 @@ export function AppTopBar({
         <h1 className="truncate font-display text-lg font-bold leading-tight text-foreground">
           {title}
         </h1>
-        <p className="truncate text-[11px] text-muted-foreground">{store}</p>
+        <p className="truncate text-[11px] text-muted-foreground">{storeLabel}</p>
       </div>
 
       <div className="flex items-center gap-2">
