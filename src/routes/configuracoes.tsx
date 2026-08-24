@@ -49,18 +49,21 @@ export const Route = createFileRoute("/configuracoes")({
 });
 
 function ConfiguracoesPage() {
-  const [settings, setSettings] = useState<StoreSettings>(getStoredSettings());
+  const { settings, dirty, update, save, discard } = useSettings();
   const [users, setUsers] = useState<AuthUser[]>(MOCK_USERS);
   const [isTestingScale, setIsTestingScale] = useState(false);
 
-  useEffect(() => {
-    setSettings(getStoredSettings());
-  }, []);
+  const setSettings = (next: StoreSettings) => update(next);
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
-    saveStoredSettings(settings);
-    toast.success("Configurações atualizadas com sucesso!");
+    save();
+    toast.success("Configurações salvas e aplicadas no sistema!");
+  };
+
+  const handleDiscard = () => {
+    discard();
+    toast.info("Alterações descartadas.");
   };
 
   const handleTestScale = () => {
