@@ -93,7 +93,7 @@ export function AppSidebar() {
                 MeuPDV
               </span>
               <span className="block truncate text-[11px] text-muted-foreground">
-                Mercadinho Central
+                {settings.companyName}
               </span>
             </span>
           )}
