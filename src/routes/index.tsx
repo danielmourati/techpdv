@@ -66,12 +66,12 @@ function HomePage() {
 // 1. Home Login Portal (Padrão idêntico ao /login quando não autenticado)
 // ---------------------------------------------------------------------------
 function HomeLoginPortal() {
-  const { login } = useAuth();
+  const { login, openingFloat } = useAuth();
   const [selectedUserId, setSelectedUserId] = useState<string>(MOCK_USERS[0].id);
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-  const selectedUser = MOCK_USERS.find((u) => u.id === selectedUserId) ?? MOCK_USERS[0];
+  const selectedUser = MOCK_USERS.find((u) => u.id === selectedUserId) ?? MOCK_USERS[0]!;
 
   const handleSelectUser = (id: string) => {
     setSelectedUserId(id);
@@ -147,19 +147,17 @@ function HomeLoginPortal() {
                         key={u.id}
                         type="button"
                         onClick={() => handleSelectUser(u.id)}
-                        className={`flex flex-col items-start rounded-lg border p-2.5 text-left transition-all ${
-                          isSelected
+                        className={`flex flex-col items-start rounded-lg border p-2.5 text-left transition-all ${isSelected
                             ? "border-primary bg-primary/10 ring-2 ring-primary/20 shadow-xs"
                             : "border-border bg-card hover:bg-accent"
-                        }`}
+                          }`}
                       >
                         <div className="flex w-full items-center justify-between mb-1.5">
                           <span
-                            className={`grid size-7 place-items-center rounded-md font-display text-xs font-bold ${
-                              u.role === "admin"
+                            className={`grid size-7 place-items-center rounded-md font-display text-xs font-bold ${u.role === "admin"
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-emerald-600 text-white"
-                            }`}
+                              }`}
                           >
                             {u.avatarText}
                           </span>
@@ -182,11 +180,10 @@ function HomeLoginPortal() {
               <div className="flex items-center justify-between rounded-lg border border-border bg-muted/40 p-3">
                 <div className="flex items-center gap-2.5">
                   <span
-                    className={`grid size-9 shrink-0 place-items-center rounded-md font-display text-xs font-bold ${
-                      selectedUser.role === "admin"
+                    className={`grid size-9 shrink-0 place-items-center rounded-md font-display text-xs font-bold ${selectedUser.role === "admin"
                         ? "bg-primary text-primary-foreground"
                         : "bg-emerald-600 text-white"
-                    }`}
+                      }`}
                   >
                     {selectedUser.avatarText}
                   </span>
@@ -230,38 +227,71 @@ function HomeLoginPortal() {
                 </div>
               </div>
 
-              {/* Fast 1-Click Access Buttons */}
+              {/* Opening Cash Float */}
+              <div className="space-y-1.5 rounded-lg border border-border bg-muted/20 p-3">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="home-float" className="text-xs font-semibold flex items-center gap-1.5">
+                    <DollarSign className="size-3.5 text-emerald-600" />
+                    Fundo de Troco Inicial (Suprimento)
+                  </Label>
+                  <span className="text-[10px] text-muted-foreground">Valor em gaveta</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-muted-foreground">
+                      R$
+                    </span>
+                    <Input
+                      id="home-float"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={cashFloat}
+                      onChange={(e) => setCashFloat(e.target.value)}
+                      className="h-9 pl-9 font-mono text-xs font-bold text-foreground"
+                      placeholder="100.00"
+                    />
+                  </div>
+                  <div className="flex gap-1">
+                    {[50, 100, 200].map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() => setCashFloat(String(v))}
+                        className="rounded-md border border-border bg-card px-2 py-1 text-[10px] font-bold text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+                      >
+                        R$ {v}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 1-Click Fast Demonstration Login */}
               <div className="pt-1">
-                <p className="mb-2 text-[11px] font-medium text-muted-foreground">
-                  Acesso rápido para demonstração:
+                <p className="mb-1.5 text-[11px] font-medium text-muted-foreground">
+                  Acesso rápido com 1 clique:
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="h-auto flex-col items-start gap-1 py-2 text-left"
+                    className="h-9 gap-1.5 text-xs font-medium justify-start"
                     onClick={() => handleQuickLogin(MOCK_USERS[0])}
                   >
-                    <span className="flex items-center gap-1.5 font-display text-xs font-bold text-primary">
-                      <ShieldCheck className="size-3.5" />
-                      Administrador
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">Acesso Total</span>
+                    <ShieldCheck className="size-3.5 text-primary shrink-0" />
+                    <span className="truncate">Admin (Acesso Total)</span>
                   </Button>
-
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="h-auto flex-col items-start gap-1 py-2 text-left"
+                    className="h-9 gap-1.5 text-xs font-medium justify-start"
                     onClick={() => handleQuickLogin(MOCK_USERS[1])}
                   >
-                    <span className="flex items-center gap-1.5 font-display text-xs font-bold text-emerald-600">
-                      <UserCheck className="size-3.5" />
-                      Operador
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">Caixa & Vendas</span>
+                    <UserCheck className="size-3.5 text-emerald-600 shrink-0" />
+                    <span className="truncate">Operador (Caixa)</span>
                   </Button>
                 </div>
               </div>
