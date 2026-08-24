@@ -45,7 +45,20 @@ export function AppTopBar({
   return (
     <>
       <header className="grid shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-card px-4 py-2.5 shadow-2xs">
-        <SidebarTrigger className="size-10 shrink-0 rounded-lg border border-border transition-colors hover:bg-accent" />
+        <div className="flex shrink-0 items-center gap-3">
+          <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl border border-border bg-primary font-display text-base font-black text-primary-foreground shadow-2xs">
+            {settings.logoUrl ? (
+              <img
+                src={settings.logoUrl}
+                alt={`Logo ${storeLabel}`}
+                className="size-full object-contain"
+              />
+            ) : (
+              (settings.tradeName || "PD").slice(0, 2).toUpperCase()
+            )}
+          </span>
+          <SidebarTrigger className="size-10 shrink-0 rounded-lg border border-border transition-colors hover:bg-accent" />
+        </div>
 
         <div className="min-w-0">
           <h1 className="truncate font-display text-xl font-extrabold leading-tight text-foreground">
@@ -53,6 +66,7 @@ export function AppTopBar({
           </h1>
           <p className="truncate text-xs font-medium text-muted-foreground">{storeLabel}</p>
         </div>
+
 
         <div className="flex items-center gap-3">
           {showCashPill && (

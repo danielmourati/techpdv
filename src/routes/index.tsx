@@ -55,7 +55,11 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { user } = useAuth();
+  const { user, hydrated } = useAuth();
+
+  if (!hydrated) {
+    return <div className="min-h-screen w-full bg-background" />;
+  }
 
   if (!user) {
     return <HomeLoginPortal />;
@@ -69,7 +73,7 @@ function HomePage() {
 // ---------------------------------------------------------------------------
 function HomeLoginPortal() {
   const { login, openingFloat } = useAuth();
-  const [selectedUserId, setSelectedUserId] = useState<string>(MOCK_USERS[0].id);
+  const [selectedUserId, setSelectedUserId] = useState<string>(MOCK_USERS[0]!.id);
   const [password, setPassword] = useState<string>("");
   const [cashFloat, setCashFloat] = useState<string>(String(openingFloat || 100));
   const [loading, setLoading] = useState(false);
@@ -282,7 +286,7 @@ function HomeLoginPortal() {
                     variant="outline"
                     size="sm"
                     className="h-9 gap-1.5 text-xs font-medium justify-start"
-                    onClick={() => handleQuickLogin(MOCK_USERS[0])}
+                    onClick={() => handleQuickLogin(MOCK_USERS[0]!)}
                   >
                     <ShieldCheck className="size-3.5 text-primary shrink-0" />
                     <span className="truncate">Admin (Acesso Total)</span>
@@ -292,7 +296,7 @@ function HomeLoginPortal() {
                     variant="outline"
                     size="sm"
                     className="h-9 gap-1.5 text-xs font-medium justify-start"
-                    onClick={() => handleQuickLogin(MOCK_USERS[1])}
+                    onClick={() => handleQuickLogin(MOCK_USERS[1]!)}
                   >
                     <UserCheck className="size-3.5 text-emerald-600 shrink-0" />
                     <span className="truncate">Operador (Caixa)</span>
@@ -470,7 +474,7 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
           <AppTopBar cashTotal={sales.activeTotal} />
           <CurrentProductBar item={sales.currentItem} />
 
-          <main className="grid min-h-0 flex-1 gap-2 overflow-hidden p-2 lg:grid-cols-[16rem_minmax(0,1fr)_28rem]">
+          <main className="grid min-h-0 flex-1 gap-2 overflow-hidden p-2 lg:grid-cols-[16rem_minmax(0,1fr)_22rem] 2xl:grid-cols-[18rem_minmax(0,1fr)_24rem]">
             <div className="hidden min-h-0 lg:grid">
               <ProductSidebar
                 productName={sales.currentItem?.name}

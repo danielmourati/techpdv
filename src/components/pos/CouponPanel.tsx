@@ -29,9 +29,9 @@ export function CouponPanel({
   const { saved: settings } = useSettings();
 
   return (
-    <section className="grid h-full min-h-0 grid-rows-[auto_auto_minmax(0,1fr)_auto] overflow-hidden rounded-lg border border-[#dedfa8] bg-[#F3F4C9] text-stone-900 shadow-sm">
+    <section className="grid h-full min-h-0 grid-rows-[auto_auto_minmax(0,1fr)_auto] overflow-hidden rounded-lg border border-border bg-card text-foreground shadow-sm">
       {/* Streamlined Header */}
-      <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 border-b border-[#dedfa8] bg-[#ebeca8]/90 px-3 py-2">
+      <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 border-b border-border bg-muted/60 px-3 py-2">
         <span className="grid size-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-2xs">
           <Receipt className="size-4.5" />
         </span>
@@ -44,7 +44,7 @@ export function CouponPanel({
               {items.length} {items.length === 1 ? "item" : "itens"}
             </span>
           </div>
-          <p className="num truncate font-display text-sm font-extrabold text-stone-800 leading-none mt-0.5">
+          <p className="num truncate font-display text-sm font-extrabold text-foreground leading-none mt-0.5">
             {items.length === 0 ? "Aguardando itens..." : `${items.length} produto(s) no cupom`}
           </p>
         </div>
@@ -55,7 +55,7 @@ export function CouponPanel({
           aria-label="Limpar cupom"
           onClick={onClear}
           disabled={items.length === 0}
-          className="size-7.5 shrink-0 rounded-md border-red-300 bg-red-100/80 text-red-700 hover:bg-red-600 hover:text-white transition-colors"
+          className="size-7.5 shrink-0 rounded-md border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
           title="Limpar todos os itens (F8)"
         >
           <Trash2 className="size-3.5" />
@@ -63,15 +63,15 @@ export function CouponPanel({
       </header>
 
       {/* Subheader table columns */}
-      <div className="flex items-center justify-between border-b border-[#dedfa8] bg-[#e4e5a2]/70 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-stone-700">
+      <div className="flex items-center justify-between border-b border-border bg-muted/40 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
         <span>Item / Descrição</span>
         <span>Subtotal</span>
       </div>
 
       {/* Optimized Compact Item List */}
-      <ul className="min-h-0 divide-y divide-[#dedfa8]/80 overflow-y-auto">
+      <ul className="min-h-0 divide-y divide-border overflow-y-auto">
         {items.length === 0 && (
-          <li className="px-4 py-10 text-center text-xs font-semibold text-stone-600">
+          <li className="px-4 py-10 text-center text-xs font-semibold text-muted-foreground">
             Nenhum item no cupom. Leia um código com o leitor ou use os atalhos.
           </li>
         )}
@@ -82,15 +82,15 @@ export function CouponPanel({
             className={cn(
               "cursor-pointer px-3 py-1.5 transition-colors border-l-4",
               item.id === currentItemId
-                ? "bg-[#e2e39c] border-l-primary"
-                : "border-l-transparent hover:bg-[#ebeca8]/70",
+                ? "bg-accent border-l-primary"
+                : "border-l-transparent hover:bg-muted/50",
             )}
           >
             {/* Top Line: Number + Name + Subtotal + Remove */}
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0 flex-1 flex items-baseline gap-1.5">
                 <span className="text-primary font-black text-xs shrink-0">#{index + 1}</span>
-                <span className="font-display text-xs sm:text-[13px] font-extrabold uppercase text-stone-900 leading-tight truncate">
+                <span className="font-display text-xs sm:text-[13px] font-extrabold uppercase text-foreground leading-tight truncate">
                   {item.name}
                 </span>
               </div>
@@ -104,7 +104,7 @@ export function CouponPanel({
                   size="icon"
                   variant="ghost"
                   aria-label={`Remover ${item.name}`}
-                  className="size-6 shrink-0 rounded text-red-700 hover:bg-red-500/15 transition-colors p-0"
+                  className="size-6 shrink-0 rounded text-destructive hover:bg-destructive/10 transition-colors p-0"
                   onClick={(e) => {
                     e.stopPropagation();
                     onRemove(item.id);
@@ -119,7 +119,7 @@ export function CouponPanel({
             {/* Bottom Line: Barcode + Compact Qtd adjusters + Unit Price */}
             <div className="mt-0.5 flex items-center justify-between gap-1 text-[11px]">
               <div className="flex items-center gap-2">
-                <span className="num text-[10px] text-stone-600 font-mono">
+                <span className="num text-[10px] text-muted-foreground font-mono">
                   {item.code}
                 </span>
 
@@ -127,7 +127,7 @@ export function CouponPanel({
                   <button
                     type="button"
                     aria-label={`Diminuir quantidade de ${item.name}`}
-                    className="size-5 rounded border border-[#c9caa0] bg-white/90 text-stone-800 hover:bg-primary hover:text-white flex items-center justify-center transition-colors shadow-2xs font-bold"
+                    className="size-5 rounded border border-border bg-background text-foreground hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors shadow-2xs font-bold"
                     onClick={(e) => {
                       e.stopPropagation();
                       onChangeQuantity(item.id, item.unit === "KG" ? -0.1 : -1);
@@ -135,14 +135,14 @@ export function CouponPanel({
                   >
                     <Minus className="size-2.5 stroke-[3]" />
                   </button>
-                  <span className="num min-w-10 rounded border border-[#c9caa0] px-1 py-0.2 text-center text-[11px] font-extrabold bg-white/95 text-stone-900 shadow-2xs">
+                  <span className="num min-w-10 rounded border border-border px-1 py-0.2 text-center text-[11px] font-extrabold bg-background text-foreground shadow-2xs">
                     {qty(item.quantity)}
                     {item.unit === "KG" ? " kg" : ""}
                   </span>
                   <button
                     type="button"
                     aria-label={`Aumentar quantidade de ${item.name}`}
-                    className="size-5 rounded border border-[#c9caa0] bg-white/90 text-stone-800 hover:bg-primary hover:text-white flex items-center justify-center transition-colors shadow-2xs font-bold"
+                    className="size-5 rounded border border-border bg-background text-foreground hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors shadow-2xs font-bold"
                     onClick={(e) => {
                       e.stopPropagation();
                       onChangeQuantity(item.id, item.unit === "KG" ? 0.1 : 1);
@@ -154,7 +154,7 @@ export function CouponPanel({
               </div>
 
               <div className="text-right">
-                <span className="num text-[11px] font-bold text-stone-700">
+                <span className="num text-[11px] font-bold text-muted-foreground">
                   {brl(item.price)}
                   {item.unit === "KG" ? "/kg" : " un"}
                 </span>
@@ -165,9 +165,9 @@ export function CouponPanel({
       </ul>
 
       {/* Streamlined Footer without Dinheiro / PIX buttons */}
-      <footer className="grid gap-2 border-t border-[#dedfa8] bg-[#ebeca8]/70 p-2.5">
-        <div className="flex items-center justify-between gap-2 rounded-md border border-[#dedfa8] bg-[#f8f9db] px-3 py-1.5">
-          <span className="font-display text-[10px] font-bold uppercase tracking-wider text-stone-600">
+      <footer className="grid gap-2 border-t border-border bg-muted/50 p-2.5">
+        <div className="flex items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-1.5">
+          <span className="font-display text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             Cliente
           </span>
           <span className="font-display text-[11px] font-black uppercase text-primary">
@@ -196,7 +196,7 @@ export function CouponPanel({
         </Button>
 
         {settings.receiptFooterMessage && (
-          <p className="truncate px-1 text-center text-[10px] italic text-stone-600">
+          <p className="truncate px-1 text-center text-[10px] italic text-muted-foreground">
             {settings.receiptFooterMessage}
           </p>
         )}

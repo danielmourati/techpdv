@@ -88,13 +88,20 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-primary/30 bg-primary text-primary-foreground">
-      <SidebarHeader className="border-b border-white/15 bg-primary p-3">
+    <Sidebar
+      collapsible="icon"
+      className={
+        collapsed
+          ? "border-r border-border bg-card text-foreground"
+          : "border-r border-primary/30 bg-primary text-primary-foreground"
+      }
+    >
+      <SidebarHeader className={`p-3 border-b ${collapsed ? "border-border bg-card" : "border-white/15 bg-primary"}`}>
         <Link
           to="/"
           className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 px-1 py-0.5 transition-opacity hover:opacity-90"
         >
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white font-display text-base font-black text-primary shadow-md">
+          <span className={`grid size-9 shrink-0 place-items-center rounded-lg font-display text-base font-black shadow-md ${collapsed ? "bg-primary text-primary-foreground" : "bg-white text-primary"}`}>
             PD
           </span>
           {!collapsed && (
@@ -110,10 +117,10 @@ export function AppSidebar() {
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className="bg-primary p-2">
+      <SidebarContent className={`p-2 ${collapsed ? "bg-card" : "bg-primary"}`}>
         {GROUPS.map((group) => (
           <SidebarGroup key={group.label} className="py-1">
-            <SidebarGroupLabel className="text-xs font-bold uppercase tracking-wider text-white/75 px-2 mb-1">
+            <SidebarGroupLabel className={`text-xs font-bold uppercase tracking-wider px-2 mb-1 ${collapsed ? "text-muted-foreground" : "text-white/75"}`}>
               {group.label}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -129,13 +136,23 @@ export function AppSidebar() {
                           to={item.to}
                           className={`flex items-center gap-3 px-3 py-2 text-sm transition-all rounded-lg ${
                             isActive
-                              ? "bg-white font-bold text-primary shadow-sm"
-                              : "text-white/90 hover:bg-white/15 hover:text-white font-medium"
+                              ? collapsed
+                                ? "bg-primary font-bold text-primary-foreground shadow-sm"
+                                : "bg-white font-bold text-primary shadow-sm"
+                              : collapsed
+                                ? "text-muted-foreground hover:bg-accent hover:text-foreground font-medium"
+                                : "text-white/90 hover:bg-white/15 hover:text-white font-medium"
                           }`}
                         >
                           <item.icon
                             className={`size-4.5 shrink-0 ${
-                              isActive ? "text-primary" : "text-white/80"
+                              isActive
+                                ? collapsed
+                                  ? "text-primary-foreground"
+                                  : "text-primary"
+                                : collapsed
+                                  ? "text-muted-foreground"
+                                  : "text-white/80"
                             }`}
                           />
                           <span className="truncate text-sm font-semibold">{item.title}</span>
@@ -150,15 +167,15 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-white/15 bg-primary p-2.5">
+      <SidebarFooter className={`p-2.5 border-t ${collapsed ? "border-border bg-card" : "border-white/15 bg-primary"}`}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 rounded-lg border border-white/20 bg-black/15 p-2 text-left transition-colors hover:bg-black/25 focus:outline-none"
+              className={`grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 rounded-lg border p-2 text-left transition-colors focus:outline-none ${collapsed ? "border-border bg-muted/50 hover:bg-accent" : "border-white/20 bg-black/15 hover:bg-black/25"}`}
             >
               <span
-                className={`grid size-8.5 shrink-0 place-items-center rounded-md font-display text-xs font-bold bg-white text-primary shadow-xs`}
+                className="grid size-8.5 shrink-0 place-items-center rounded-md bg-primary font-display text-xs font-bold text-primary-foreground shadow-xs"
               >
                 {user ? user.avatarText : <UserRound className="size-4" />}
               </span>
