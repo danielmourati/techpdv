@@ -682,8 +682,25 @@ function ConfiguracoesPage() {
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end pt-2">
-          <Button type="submit" size="sm" className="gap-1.5">
+        <div className="sticky bottom-0 -mx-1 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/95 px-1 py-3 backdrop-blur">
+          <span
+            className={`mr-auto text-xs font-medium ${
+              dirty ? "text-amber-600" : "text-muted-foreground"
+            }`}
+          >
+            {dirty ? "Você tem alterações não salvas" : "Todas as configurações estão salvas"}
+          </span>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="gap-1.5"
+            disabled={!dirty}
+            onClick={handleDiscard}
+          >
+            Descartar alterações
+          </Button>
+          <Button type="submit" size="sm" className="gap-1.5" disabled={!dirty}>
             <Save className="size-4" />
             Salvar Todas as Configurações
           </Button>
