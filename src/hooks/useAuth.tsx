@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { MOCK_USERS, type AuthUser } from "@/data/mock-auth";
 import {
   getCurrentShift,
@@ -26,8 +33,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AUTH_STORAGE_KEY = "meupdv_current_user_id";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Estado inicial igual no servidor e no cliente para evitar erro de hidratação;
-  // a sessão salva é lida somente depois da montagem.
   const [user, setUser] = useState<AuthUser | null>(null);
   const [activeShift, setActiveShift] = useState<CashShift | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -38,29 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const savedId = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (!savedId) return null;
-    const found = MOCK_USERS.find((u) => u.id === savedId);
-    return found ?? null;
-  });
+    if (savedId) {
+      setUser(MOCK_USERS.find((candidate) => candidate.id === savedId) ?? null);
+    }
+    syncShift();
+    setHydrated(true);
 
-  const [isShiftOpen, setIsShiftOpen] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      const raw = localStorage.getItem(SHIFT_STORAGE_KEY);
-      return raw ? !!JSON.parse(raw).isOpen : false;
-    } catch {
-      return false;
-    }
-  });
-  const [openingFloat, setOpeningFloat] = useState<number>(() => {
-    if (typeof window === "undefined") return 0;
-    try {
-      const raw = localStorage.getItem(SHIFT_STORAGE_KEY);
-      return raw ? Number(JSON.parse(raw).openingFloat) || 0 : 0;
-    } catch {
-      return 0;
-    }
-  });
+    window.addEventListener("meupdv_shift_updated", syncShift);
+    return () => window.removeEventListener("meupdv_shift_updated", syncShift);
+  }, [syncShift]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -72,18 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") {
       window.dispatchEvent(new Event("meupdv_auth_changed"));
     }
-  }, [user]);
-
-  const persistShift = (open: boolean, floatVal: number) => {
-    setIsShiftOpen(open);
-    setOpeningFloat(floatVal);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(
-        SHIFT_STORAGE_KEY,
-        JSON.stringify({ isOpen: open, openingFloat: floatVal, openedAt: new Date().toISOString() })
-      );
-    }
-  };
+  }, [hydrated, user]);
 
   const login = (userId: string, passwordOrPin?: string, initialFloat?: number): boolean => {
     const targetUser = MOCK_USERS.find((u) => u.id === userId);
