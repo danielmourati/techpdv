@@ -74,7 +74,6 @@ function HomePage() {
 // ---------------------------------------------------------------------------
 function HomeLoginPortal() {
   const { login, openingFloat } = useAuth();
-  const { saved: settings } = useSettings();
   const [selectedUserId, setSelectedUserId] = useState<string>(MOCK_USERS[0].id);
   const [password, setPassword] = useState<string>("");
   const [cashFloat, setCashFloat] = useState<string>(String(openingFloat || 100));

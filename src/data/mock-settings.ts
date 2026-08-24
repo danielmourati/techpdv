@@ -3,14 +3,12 @@ import { DEFAULT_THEME, type ThemeId } from "./theme-palettes";
 export type StoreSettings = {
   // Identidade Visual & Aparência
   theme: ThemeId;
-  logoUrl?: string;
-
-  // Dados da Empresa
-
-  companyName: string;
-  tradeName: string;
   /** URL opcional do logo do estabelecimento exibido no topo do caixa. */
   logoUrl: string;
+
+  // Dados da Empresa
+  companyName: string;
+  tradeName: string;
   cnpj: string;
   stateRegistration: string;
   phone: string;
@@ -51,7 +49,6 @@ const INITIAL_SETTINGS: StoreSettings = {
 
   companyName: "Mercadinho Central de Alimentos Ltda",
   tradeName: "MeuPDV - Mercadinho Central",
-  logoUrl: "",
   cnpj: "12.345.678/0001-90",
   stateRegistration: "123.456.789.000",
   phone: "(11) 3234-5678",
