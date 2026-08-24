@@ -8,6 +8,8 @@ export type StoreSettings = {
 
   companyName: string;
   tradeName: string;
+  /** URL opcional do logo do estabelecimento exibido no topo do caixa. */
+  logoUrl: string;
   cnpj: string;
   stateRegistration: string;
   phone: string;
@@ -47,6 +49,7 @@ const INITIAL_SETTINGS: StoreSettings = {
 
   companyName: "Mercadinho Central de Alimentos Ltda",
   tradeName: "MeuPDV - Mercadinho Central",
+  logoUrl: "",
   cnpj: "12.345.678/0001-90",
   stateRegistration: "123.456.789.000",
   phone: "(11) 3234-5678",
