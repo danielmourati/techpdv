@@ -44,7 +44,7 @@ export function ProductSidebar({
   const { saved: settings } = useSettings();
 
   return (
-    <aside className="grid min-h-0 grid-rows-[1.5fr_1fr_auto] gap-2">
+    <aside className="grid min-h-0 grid-rows-[1.05fr_1.3fr_auto] gap-2">
       <div className="grid min-h-0 place-items-center overflow-hidden rounded-xl border border-border bg-card p-4 shadow-2xs">
         {settings.logoUrl ? (
           <img
