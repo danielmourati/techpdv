@@ -60,11 +60,11 @@ function LoginPage() {
     setPassword(u.passwordHint);
     setLoading(true);
     setTimeout(() => {
-      login(u.id);
+      login(u.id, u.passwordHint);
       toast.success(`Bem-vindo, ${u.name}! (${u.roleLabel})`);
       setLoading(false);
       navigate({ to: "/" });
-    }, 300);
+    }, 250);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -77,10 +77,10 @@ function LoginPage() {
         toast.success(`Autenticado com sucesso como ${selectedUser.name}!`);
         navigate({ to: "/" });
       } else {
-        toast.error("Senha incorreta. Tente 'admin123' ou '123456'.");
+        toast.error("Senha ou PIN incorreto. Tente 'admin123' ou '123456'.");
       }
       setLoading(false);
-    }, 400);
+    }, 300);
   };
 
   return (

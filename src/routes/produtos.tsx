@@ -1,12 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   AlertTriangle,
   Boxes,
+  Camera,
   CheckCircle2,
   DollarSign,
   Edit2,
+  Image as ImageIcon,
+  Link as LinkIcon,
   Package,
   PackageCheck,
   PackagePlus,
@@ -16,6 +19,7 @@ import {
   Search,
   SlidersHorizontal,
   Trash2,
+  UploadCloud,
   X,
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -49,6 +53,44 @@ import {
   type ProductCategory,
 } from "@/data/mock-products";
 
+async function compressImage(file: File, maxWidth = 500, maxHeight = 500, quality = 0.82): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(e.target?.result as string);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = () => resolve(e.target?.result as string);
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export const Route = createFileRoute("/produtos")({
   head: () => ({
     meta: [
@@ -72,6 +114,7 @@ const DEFAULT_FORM_PRODUCT: Omit<Product, "id"> = {
   soldByWeight: false,
   quickAdd: false,
   active: true,
+  imageUrl: "",
 };
 
 function ProdutosPage() {
@@ -128,18 +171,67 @@ function ProdutosPage() {
       ? (((formData.price - formData.costPrice) / formData.costPrice) * 100).toFixed(1)
       : "0.0";
 
+  const [urlInput, setUrlInput] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem válido (PNG, JPG, WebP).");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("A imagem deve ter no máximo 10MB.");
+      return;
+    }
+
+    try {
+      toast.loading("Otimizando foto do produto...", { id: "img-upload" });
+      const compressedBase64 = await compressImage(file);
+      setFormData((prev) => ({ ...prev, imageUrl: compressedBase64 }));
+      toast.success("Foto do produto carregada e otimizada!", { id: "img-upload" });
+    } catch (err) {
+      toast.error("Erro ao processar imagem.", { id: "img-upload" });
+      console.error(err);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
+
+  const handleApplyUrl = () => {
+    if (!urlInput.trim()) return;
+    setFormData((prev) => ({ ...prev, imageUrl: urlInput.trim() }));
+    setUrlInput("");
+    toast.success("URL da foto aplicada com sucesso!");
+  };
+
   const handleOpenCreate = () => {
     setEditingProduct(null);
+    setUrlInput("");
     setFormData({
       ...DEFAULT_FORM_PRODUCT,
       code: `7891000${Math.floor(100000 + Math.random() * 900000)}`,
       internalCode: `PRD-${products.length + 1}`,
+      imageUrl: "",
     });
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (prod: Product) => {
     setEditingProduct(prod);
+    setUrlInput("");
     setFormData({
       name: prod.name,
       code: prod.code,
@@ -153,6 +245,7 @@ function ProdutosPage() {
       soldByWeight: !!prod.soldByWeight,
       quickAdd: !!prod.quickAdd,
       active: prod.active !== false,
+      imageUrl: prod.imageUrl ?? "",
     });
     setIsModalOpen(true);
   };
@@ -348,6 +441,7 @@ function ProdutosPage() {
             <table className="w-full text-left text-xs">
               <thead className="border-b border-border bg-muted/50 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 <tr>
+                  <th className="w-12 px-3 py-3 text-center">Foto</th>
                   <th className="px-4 py-3">Código</th>
                   <th className="px-4 py-3">Produto</th>
                   <th className="px-4 py-3">Categoria</th>
@@ -363,7 +457,7 @@ function ProdutosPage() {
               <tbody className="divide-y divide-border">
                 {filteredProducts.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="py-8 text-center text-muted-foreground">
+                    <td colSpan={11} className="py-8 text-center text-muted-foreground">
                       Nenhum produto encontrado com os filtros informados.
                     </td>
                   </tr>
@@ -382,6 +476,20 @@ function ProdutosPage() {
                           prod.active === false ? "opacity-60" : ""
                         }`}
                       >
+                        <td className="px-3 py-2 text-center">
+                          <div className="mx-auto flex size-10 items-center justify-center overflow-hidden rounded-md border border-border bg-muted/40 shadow-2xs">
+                            {prod.imageUrl ? (
+                              <img
+                                src={prod.imageUrl}
+                                alt={prod.name}
+                                className="size-full object-cover transition-transform duration-200 hover:scale-125"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <ImageIcon className="size-4 text-muted-foreground/40" />
+                            )}
+                          </div>
+                        </td>
                         <td className="px-4 py-3 font-mono">
                           <span className="font-semibold text-foreground">{prod.code}</span>
                           {prod.internalCode && (
@@ -578,6 +686,109 @@ function ProdutosPage() {
                     <SelectItem value="LT">LT - Litro</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+
+            {/* Product Image Upload Section */}
+            <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold flex items-center gap-1.5">
+                  <Camera className="size-4 text-primary" />
+                  Foto do Produto
+                </Label>
+                {formData.imageUrl && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFormData({ ...formData, imageUrl: "" })}
+                    className="h-6 px-2 text-[11px] text-rose-500 hover:bg-rose-500/10 hover:text-rose-600 gap-1"
+                  >
+                    <Trash2 className="size-3" />
+                    Remover foto
+                  </Button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-3 items-center">
+                {/* Preview / Trigger */}
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="group relative size-24 shrink-0 rounded-lg border-2 border-dashed border-border hover:border-primary bg-card flex flex-col items-center justify-center cursor-pointer overflow-hidden transition-all shadow-xs"
+                  title="Clique para escolher uma imagem"
+                >
+                  {formData.imageUrl ? (
+                    <>
+                      <img
+                        src={formData.imageUrl}
+                        alt="Preview"
+                        className="size-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity">
+                        <Camera className="size-4 mb-0.5" />
+                        <span className="text-[9px] font-semibold">Trocar</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center text-center p-1.5 text-muted-foreground group-hover:text-primary transition-colors">
+                      <UploadCloud className="size-6 mb-1" />
+                      <span className="text-[10px] font-semibold leading-tight">Enviar Foto</span>
+                      <span className="text-[8px] opacity-70">PNG/JPG</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Dropzone & URL Input */}
+                <div className="space-y-2">
+                  <div
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="rounded-md border border-dashed border-border hover:border-primary bg-background/50 p-2.5 text-center cursor-pointer transition-colors"
+                  >
+                    <p className="text-xs font-medium text-foreground">
+                      Arraste uma foto aqui ou <span className="text-primary font-semibold underline">clique para selecionar</span>
+                    </p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                      Otimização e compressão automática no navegador (máx. 10MB)
+                    </p>
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png, image/jpeg, image/webp"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <LinkIcon className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        value={urlInput}
+                        onChange={(e) => setUrlInput(e.target.value)}
+                        placeholder="Ou cole a URL direta da imagem..."
+                        className="h-8 pl-8 text-xs font-mono"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleApplyUrl();
+                          }
+                        }}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleApplyUrl}
+                      className="h-8 text-xs shrink-0"
+                    >
+                      Aplicar URL
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
 

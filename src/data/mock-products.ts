@@ -23,6 +23,7 @@ export type Product = {
   soldByWeight?: boolean;
   active?: boolean;
   supplierId?: string;
+  imageUrl?: string;
   updatedAt?: string;
 };
 

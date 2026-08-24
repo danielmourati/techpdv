@@ -15,6 +15,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 export function ProductSidebar({
   productName,
+  imageUrl,
   stock,
   unit,
   unitValue,
@@ -22,6 +23,7 @@ export function ProductSidebar({
   status,
 }: {
   productName?: string | undefined;
+  imageUrl?: string | undefined;
   stock: number;
   unit: string;
   unitValue: number;
@@ -32,7 +34,7 @@ export function ProductSidebar({
     <aside className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
       <div className="grid min-h-0 place-items-center overflow-hidden rounded-md border border-border bg-surface p-3">
         <img
-          src={productPlaceholder}
+          src={imageUrl || productPlaceholder}
           alt={productName ? `Imagem do produto ${productName}` : "Imagem do produto"}
           className="h-full w-full rounded-sm object-contain"
           loading="lazy"

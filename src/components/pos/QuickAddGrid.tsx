@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import productPlaceholder from "@/assets/product-placeholder.jpg";
-import { MOCK_PRODUCTS, type Product } from "@/data/mock-products";
+import { getStoredProducts, type Product } from "@/data/mock-products";
 import { brl } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 
 const PAGE_SIZE = 8;
 
 export function QuickAddGrid({ onAdd }: { onAdd: (product: Product) => void }) {
-  const products = MOCK_PRODUCTS.filter((p) => p.quickAdd);
+  const [allProducts, setAllProducts] = useState<Product[]>(() => getStoredProducts());
+
+  useEffect(() => {
+    const handleUpdate = () => setAllProducts(getStoredProducts());
+    window.addEventListener("meupdv_products_updated", handleUpdate);
+    return () => window.removeEventListener("meupdv_products_updated", handleUpdate);
+  }, []);
+
+  const products = allProducts.filter((p) => p.quickAdd && p.active !== false);
   const pages = Math.max(1, Math.ceil(products.length / PAGE_SIZE));
   const [page, setPage] = useState(1);
   const visible = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -18,7 +26,7 @@ export function QuickAddGrid({ onAdd }: { onAdd: (product: Product) => void }) {
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 px-3 pt-3">
         <div className="min-w-0">
           <p className="font-display text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
-            Produtos · carregamento ajax
+            Produtos · carregamento rápido
           </p>
           <p className="truncate font-display text-base font-semibold">
             Toque para lançar rapidamente
@@ -38,18 +46,22 @@ export function QuickAddGrid({ onAdd }: { onAdd: (product: Product) => void }) {
               onClick={() => onAdd(p)}
               className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-border bg-card px-2 py-2 text-left transition-colors hover:border-primary hover:bg-primary/5"
             >
-              <img
-                src={productPlaceholder}
-                alt=""
-                aria-hidden
-                className="size-10 shrink-0 rounded-sm object-contain"
-                loading="lazy"
-              />
+              <div className="size-10 shrink-0 overflow-hidden rounded-md border border-border/60 bg-muted/30">
+                <img
+                  src={p.imageUrl || productPlaceholder}
+                  alt={p.name}
+                  aria-hidden
+                  className="size-full object-cover"
+                  loading="lazy"
+                />
+              </div>
               <span className="min-w-0">
                 <span className="block truncate font-display text-sm font-bold uppercase">
                   {p.name}
                 </span>
-                <span className="block truncate text-[11px] text-muted-foreground">Produto</span>
+                <span className="block truncate text-[11px] text-muted-foreground">
+                  {p.category}
+                </span>
               </span>
               <span className="num shrink-0 text-sm font-bold text-primary">{brl(p.price)}</span>
             </button>
