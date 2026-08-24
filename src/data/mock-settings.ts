@@ -1,5 +1,11 @@
+import { DEFAULT_THEME, type ThemeId } from "./theme-palettes";
+
 export type StoreSettings = {
+  // Aparência
+  theme: ThemeId;
+
   // Dados da Empresa
+
   companyName: string;
   tradeName: string;
   cnpj: string;
