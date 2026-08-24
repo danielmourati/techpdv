@@ -72,7 +72,7 @@ const DEFAULT_ENTRY: Omit<FinancialEntry, "id" | "createdAt"> = {
   amount: 0,
   paymentMethod: "DINHEIRO",
   status: "PAGO",
-  dueDate: new Date().toISOString().split("T")[0],
+  dueDate: new Date().toISOString().slice(0, 10),
   operator: "Administrador Geral",
   notes: "",
 };
@@ -168,9 +168,10 @@ function FinanceiroPage() {
     const newEntry: FinancialEntry = {
       id: `fin-${Date.now()}`,
       ...formData,
-      createdAt: new Date().toISOString().split("T")[0],
-      paymentDate:
-        formData.status === "PAGO" ? new Date().toLocaleString("pt-BR") : undefined,
+      createdAt: new Date().toISOString().slice(0, 10),
+      ...(formData.status === "PAGO"
+        ? { paymentDate: new Date().toLocaleString("pt-BR") }
+        : {}),
     };
 
     saveStoredFinancial([newEntry, ...entries]);

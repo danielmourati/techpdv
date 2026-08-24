@@ -77,7 +77,7 @@ const DEFAULT_CUSTOMER: Omit<Customer, "id"> = {
   totalPurchased: 0,
   active: true,
   notes: "",
-  createdAt: new Date().toISOString().split("T")[0],
+  createdAt: new Date().toISOString().slice(0, 10),
 };
 
 function ClientesPage() {
@@ -150,7 +150,7 @@ function ClientesPage() {
       creditLimit: cust.creditLimit,
       currentDebt: cust.currentDebt,
       totalPurchased: cust.totalPurchased,
-      lastPurchaseDate: cust.lastPurchaseDate,
+      ...(cust.lastPurchaseDate ? { lastPurchaseDate: cust.lastPurchaseDate } : {}),
       active: cust.active,
       notes: cust.notes ?? "",
       createdAt: cust.createdAt,

@@ -21,39 +21,11 @@ const SHIFT_STORAGE_KEY = "meupdv_shift_status_v1";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => {
-    if (typeof window === "undefined") return null;
+    if (typeof window === "undefined") return MOCK_USERS[0];
     const savedId = localStorage.getItem(AUTH_STORAGE_KEY);
     if (!savedId) return null;
     const found = MOCK_USERS.find((u) => u.id === savedId);
-    return found ?? null;
-  });
-
-  const [openingFloat, setOpeningFloat] = useState<number>(() => {
-    if (typeof window === "undefined") return 100;
-    const saved = localStorage.getItem(SHIFT_STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return parsed.openingFloat ?? 100;
-      } catch {
-        return 100;
-      }
-    }
-    return 100;
-  });
-
-  const [isShiftOpen, setIsShiftOpen] = useState<boolean>(() => {
-    if (typeof window === "undefined") return true;
-    const saved = localStorage.getItem(SHIFT_STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return parsed.isOpen ?? true;
-      } catch {
-        return true;
-      }
-    }
-    return true;
+    return found ?? MOCK_USERS[0]; // default to first user (Admin) or operador
   });
 
   useEffect(() => {

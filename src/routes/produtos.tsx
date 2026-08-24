@@ -894,7 +894,7 @@ function ProdutosPage() {
                 </div>
                 <Switch
                   id="quick-add"
-                  checked={formData.quickAdd}
+                  checked={!!formData.quickAdd}
                   onCheckedChange={(val) => setFormData({ ...formData, quickAdd: val })}
                 />
               </div>
@@ -910,7 +910,7 @@ function ProdutosPage() {
                 </div>
                 <Switch
                   id="weight-item"
-                  checked={formData.soldByWeight}
+                  checked={!!formData.soldByWeight}
                   onCheckedChange={(val) => setFormData({ ...formData, soldByWeight: val })}
                 />
               </div>
@@ -926,7 +926,7 @@ function ProdutosPage() {
                 </div>
                 <Switch
                   id="active-item"
-                  checked={formData.active}
+                  checked={!!formData.active}
                   onCheckedChange={(val) => setFormData({ ...formData, active: val })}
                 />
               </div>

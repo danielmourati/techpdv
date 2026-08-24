@@ -1,5 +1,11 @@
+import { DEFAULT_THEME, type ThemeId } from "./theme-palettes";
+
 export type StoreSettings = {
+  // Aparência
+  theme: ThemeId;
+
   // Dados da Empresa
+
   companyName: string;
   tradeName: string;
   cnpj: string;
@@ -37,6 +43,8 @@ export type StoreSettings = {
 };
 
 const INITIAL_SETTINGS: StoreSettings = {
+  theme: DEFAULT_THEME,
+
   companyName: "Mercadinho Central de Alimentos Ltda",
   tradeName: "MeuPDV - Mercadinho Central",
   cnpj: "12.345.678/0001-90",
@@ -80,7 +88,8 @@ export function getStoredSettings(): StoreSettings {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SETTINGS));
       return INITIAL_SETTINGS;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw) as Partial<StoreSettings>;
+    return { ...INITIAL_SETTINGS, ...parsed, theme: parsed.theme ?? DEFAULT_THEME };
   } catch {
     return INITIAL_SETTINGS;
   }

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StatusPill } from "./StatusPill";
+import { useSettings } from "@/hooks/useSettings";
 
 const STEPS = [
   "Preparando dados da venda",
@@ -21,6 +22,7 @@ export function NfceStepperModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { saved: settings } = useSettings();
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -52,6 +54,23 @@ export function NfceStepperModal({
             <StatusPill tone={done ? "success" : "primary"} className="shrink-0">
               {done ? "Autorizada" : `${progress}%`}
             </StatusPill>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 rounded-sm border border-border bg-surface px-3 py-2 text-[11px]">
+            <div>
+              <p className="uppercase tracking-[0.1em] text-muted-foreground">Ambiente</p>
+              <p className="font-semibold text-foreground">
+                {settings.nfceEnvironment === "PRODUCAO" ? "Produção" : "Homologação"}
+              </p>
+            </div>
+            <div>
+              <p className="uppercase tracking-[0.1em] text-muted-foreground">Série</p>
+              <p className="num font-semibold text-foreground">{settings.nfceSeries}</p>
+            </div>
+            <div>
+              <p className="uppercase tracking-[0.1em] text-muted-foreground">Número</p>
+              <p className="num font-semibold text-foreground">{settings.nfceLastNumber + 1}</p>
+            </div>
           </div>
 
           <ol className="grid gap-2">
