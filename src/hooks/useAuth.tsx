@@ -28,6 +28,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return found ?? MOCK_USERS[0]; // default to first user (Admin) or operador
   });
 
+  const [isShiftOpen, setIsShiftOpen] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const raw = localStorage.getItem(SHIFT_STORAGE_KEY);
+      return raw ? !!JSON.parse(raw).isOpen : false;
+    } catch {
+      return false;
+    }
+  });
+  const [openingFloat, setOpeningFloat] = useState<number>(() => {
+    if (typeof window === "undefined") return 0;
+    try {
+      const raw = localStorage.getItem(SHIFT_STORAGE_KEY);
+      return raw ? Number(JSON.parse(raw).openingFloat) || 0 : 0;
+    } catch {
+      return 0;
+    }
+  });
+
   useEffect(() => {
     if (user) {
       localStorage.setItem(AUTH_STORAGE_KEY, user.id);
