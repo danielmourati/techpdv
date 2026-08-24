@@ -3,14 +3,12 @@ import { DEFAULT_THEME, type ThemeId } from "./theme-palettes";
 export type StoreSettings = {
   // Identidade Visual & Aparência
   theme: ThemeId;
-  logoUrl?: string;
-
-  // Dados da Empresa
-
-  companyName: string;
-  tradeName: string;
   /** URL opcional do logo do estabelecimento exibido no topo do caixa. */
   logoUrl: string;
+
+  // Dados da Empresa
+  companyName: string;
+  tradeName: string;
   cnpj: string;
   stateRegistration: string;
   phone: string;
