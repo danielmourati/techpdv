@@ -1,71 +1,32 @@
-# Estudo: balança de bancada (peso automático) + emissão de NFC-e
+# Temas de cores selecionáveis nas Configurações
 
-Escopo desta entrega: apenas o estudo/plano. Nenhum código será alterado agora.
+Adiciona uma nova aba "Aparência" em Configurações onde o operador escolhe entre 3 paletas prontas, com pré-visualização e aplicação imediata em todo o app (PDV, cadastros, modais). A escolha fica salva no navegador, como as demais configurações mock.
 
-## Parte 1 — Peso automático da balança de bancada
+## As 3 paletas
 
-A balança fala por porta serial (RS-232 ou USB-serial) no PC do caixa. Isso é acesso a hardware local: nem o navegador comum nem o servidor do app alcançam a porta sozinhos. Existem dois caminhos viáveis.
+1. **Dark Operacional** — fundo azul profundo `#0A1128`, superfícies `#1E293B`, ação principal ciano neon `#00E5FF`, texto `#F8F9FA`, secundário `#94A3B8`.
+2. **Clean Corporativa** (padrão) — fundo `#F3F4F6`, cartões `#FFFFFF`, ação principal azul `#2563EB`, texto `#1F2937`, acento `#E0E7FF`.
+3. **Alto Contraste (Touch)** — fundo `#FFFFFF`, ação principal laranja `#F97316`, bordas `#E5E7EB`, tiles de produto `#F9FAFB` com borda escura no hover.
 
-### Opção A — Web Serial API no próprio navegador (recomendada para começar)
-- Funciona em Chrome/Edge desktop, em página HTTPS, com um clique inicial do operador autorizando a porta ("Conectar balança"). A permissão é lembrada por origem.
-- O app abre a porta (baud rate/paridade conforme o modelo), lê o fluxo de texto e extrai o peso.
-- Sem instalar nada na loja. Não funciona em Firefox/Safari nem no iOS/Android.
+## Cores semânticas reservadas (iguais nas 3 paletas)
 
-### Opção B — Agente local (bridge)
-- Um pequeno serviço instalado no PC do caixa expõe o peso via WebSocket/HTTP em `localhost`, e o app consome.
-- Funciona em qualquer navegador e com balanças mais exóticas, mas exige instalador, atualização e suporte em cada máquina.
+- Verde `#22C55E`: sucesso, pagamento aprovado, adicionar item, "Finalizar venda".
+- Vermelho `#EF4444`: cancelar venda, excluir item, estorno, erro.
+- Amarelo/Laranja `#F59E0B`: aguardando pagamento, estoque baixo, venda suspensa.
 
-Sugestão: implementar A e deixar a camada de leitura abstraída, de forma que B entre depois como "driver" alternativo sem mexer na tela.
+Essas cores não são usadas para estética geral. Em "Alto Contraste", o laranja de ação de checkout é um token separado (`primary`) para não colidir com o laranja de alerta.
 
-### O que precisa existir no app
-- Camada de leitura de peso com uma interface única (`readWeight()` / assinatura de eventos), com implementações: `web-serial`, `bridge-local`, `manual` (o modal de digitação que já existe) e `mock`.
-- Parsers por protocolo de balança. Cada fabricante tem seu formato de string; Toledo, Filizola e Urano diferem em prefixos, casas decimais e caractere terminador. Precisamos saber os modelos reais para escrever/validar os parsers — sem isso ficam genéricos.
-- Estado de conexão visível: conectada / sem resposta / peso instável, e sempre a saída manual como plano B.
-- Regras de operação: só aceitar peso estável, ignorar peso zero ou negativo, tara, peso máximo, e travar o lançamento se a balança sumir no meio da venda.
-- Tela de configuração: escolher porta, protocolo, baud rate, e um botão de teste que mostra o peso lido em tempo real.
-- Integração com o fluxo atual: ao ler um produto com `soldByWeight`, se a balança estiver conectada o peso entra sozinho (com confirmação rápida); se não, abre o modal de digitação como hoje.
+## Onde aparece
 
-### Limitações a assumir
-- Fiscalmente, balança usada em venda direta ao consumidor precisa ser aferida/selada pelo INMETRO — isso é da loja, não do software.
-- Web Serial só em HTTPS e navegador desktop baseado em Chromium.
+- Nova aba **Aparência** em `/configuracoes`: 3 cartões clicáveis, cada um com miniatura da paleta (fundo, superfície, ação, texto) e marca de selecionado.
+- Troca aplicada na hora, sem recarregar.
+- Botão "Restaurar padrão" volta para Clean Corporativa.
 
-## Parte 2 — Emissão de NFC-e via provedor (API REST)
+## Detalhes técnicos
 
-Emitir por provedor (PlugNotas, Focus NFe, WebmaniaBR, Nuvem Fiscal e similares) evita XML, assinatura digital e comunicação direta com a SEFAZ. O app envia um JSON da venda e recebe a nota autorizada, a chave de acesso, o XML e o DANFE.
-
-### Pré-requisitos do lado da loja (bloqueantes, não são código)
-- Certificado digital A1 (arquivo + senha) da empresa.
-- Inscrição estadual habilitada para NFC-e e credenciamento na SEFAZ do estado.
-- CSC / Token do CSC emitido pela SEFAZ (obrigatório para o QR Code da NFC-e).
-- Regime tributário e dados fiscais por produto: NCM, CFOP, CEST quando aplicável, origem, unidade tributável, CST/CSOSN, alíquotas de ICMS/PIS/COFINS.
-
-Sem esses dados por produto não existe emissão válida — hoje o mock de produtos não os tem.
-
-### O que precisa existir no app
-- Cadastro fiscal da empresa (emitente): CNPJ, IE, endereço, CRT, série e numeração da NFC-e, ambiente (homologação/produção).
-- Campos fiscais no cadastro de produto, mais um cadastro de perfis tributários reutilizáveis para não preencher item por item.
-- Persistência real das vendas (hoje tudo é estado local em memória): venda, itens, pagamentos, e uma tabela de documentos fiscais com status, chave de acesso, número, protocolo, XML e URL do DANFE.
-- Camada de emissão no servidor: monta o payload a partir da venda, chama o provedor, guarda o retorno. Chave da API do provedor fica como segredo do servidor, nunca no navegador.
-- Máquina de estados do documento: rascunho → enviado → autorizado / rejeitado → cancelado / inutilizado, com reenvio idempotente para não duplicar nota em caso de timeout.
-- Tratamento de rejeição legível para o operador (a SEFAZ devolve códigos crus) e retentativa.
-- Cancelamento (janela legal curta, geralmente 30 minutos) e carta de correção não se aplica a NFC-e.
-- Contingência offline (modelo "offline" da NFC-e): permitir concluir a venda sem internet e transmitir depois. Isso é um bloco de trabalho por si só; pode ficar para uma fase seguinte.
-- Impressão: DANFE NFC-e em 80mm na impressora térmica, mais QR Code. Impressão direta de térmica pelo navegador é limitada — na prática vai por PDF/HTML de 80mm ou pelo agente local (o mesmo da Opção B da balança).
-- Substituir o `NfceStepperModal` mockado pelo status real da emissão, reaproveitando a interface que já existe.
-
-## Ordem sugerida de implementação
-
-1. Backend e persistência de vendas (pré-requisito de tudo em NFC-e).
-2. Cadastro fiscal do emitente e campos fiscais de produto com perfis tributários.
-3. Integração com um provedor em ambiente de homologação, ligada ao stepper existente.
-4. Cancelamento, reenvio, tratamento de rejeições e impressão do DANFE 80mm.
-5. Leitura de peso por Web Serial, com fallback manual e tela de configuração.
-6. Contingência offline e, se necessário, o agente local para balanças/impressoras fora do padrão.
-
-## Informações que preciso de você para detalhar as fases
-
-- Modelo(s) e protocolo das balanças de bancada.
-- Provedor de NFC-e preferido (ou se quer uma recomendação com custo/cobertura).
-- Estado(s) de operação e regime tributário da empresa (Simples Nacional muda CSOSN).
-- Modelo da impressora térmica.
-- Se a loja opera com internet instável (define a prioridade da contingência offline).
+- `src/data/mock-settings.ts`: novo campo `theme: "DARK_OPERACIONAL" | "CLEAN_CORPORATIVA" | "ALTO_CONTRASTE"` com default `CLEAN_CORPORATIVA`, persistido no mesmo `localStorage` já usado (com fallback para settings antigos sem o campo).
+- `src/styles.css`: manter os tokens semânticos atuais; adicionar blocos de paleta por atributo `[data-theme="..."]` sobrescrevendo `--background`, `--card`, `--surface`, `--primary`, `--foreground`, `--muted-foreground`, `--border`, `--accent`, `--sidebar*`, e fixar `--success` / `--destructive` / `--warning` nos valores semânticos em todas as paletas (convertidos para `oklch`, formato exigido pelo projeto).
+- Novo `src/hooks/useTheme.tsx` (provider montado em `src/routes/__root.tsx` dentro de `AuthProvider`): lê o tema salvo, escreve `data-theme` e a classe `dark` no `<html>`, ouve o evento `meupdv_settings_updated` já disparado por `saveStoredSettings`, e evita mismatch de hidratação aplicando o atributo em `useEffect`.
+- Novo `src/components/pos/ThemePicker.tsx` com os 3 cartões de paleta, usado na aba Aparência.
+- `src/routes/configuracoes.tsx`: adicionar o `TabsTrigger`/`TabsContent` "Aparência" (ícone de paleta) e renderizar o `ThemePicker`.
+- Sem mudanças em regras de negócio; nenhum componente passa a usar cor fixa — tudo continua via tokens semânticos.
