@@ -5,7 +5,7 @@ import { AppTopBar } from "@/components/pos/AppTopBar";
 
 interface AppLayoutProps {
   title: string;
-  subtitle?: string;
+  subtitle?: string | undefined;
   cashTotal?: number;
   showCashPill?: boolean;
   children: ReactNode;
@@ -14,7 +14,7 @@ interface AppLayoutProps {
 
 export function AppLayout({
   title,
-  subtitle = "Mercadinho Central - MeuPDV",
+  subtitle,
   cashTotal = 0,
   showCashPill = true,
   children,
@@ -28,7 +28,7 @@ export function AppLayout({
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           <AppTopBar
             title={title}
-            store={subtitle}
+            {...(subtitle ? { store: subtitle } : {})}
             cashTotal={cashTotal}
             showCashPill={showCashPill}
           />
