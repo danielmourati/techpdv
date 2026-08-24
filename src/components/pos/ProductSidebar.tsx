@@ -37,7 +37,7 @@ export function ProductSidebar({
 
   return (
     <aside className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] gap-2.5">
-      <div className="grid h-24 place-items-center overflow-hidden rounded-xl border border-border bg-card p-3 shadow-2xs">
+      <div className="grid min-h-32 place-items-center overflow-hidden rounded-xl border border-border bg-card p-4 shadow-2xs">
         {settings.logoUrl ? (
           <img
             src={settings.logoUrl}
