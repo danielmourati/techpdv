@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Sparkles } from "lucide-react";
 import productPlaceholder from "@/assets/product-placeholder.jpg";
 import { getStoredProducts, type Product } from "@/data/mock-products";
 import { brl } from "@/lib/format";
@@ -22,72 +22,95 @@ export function QuickAddGrid({ onAdd }: { onAdd: (product: Product) => void }) {
   const visible = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 px-3.5 pt-3.5 pb-1">
+    <div className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] bg-card/30">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 pt-3 pb-2 border-b border-border/40">
         <div className="min-w-0">
-          <p className="font-display text-xs font-extrabold uppercase tracking-wider text-primary">
+          <p className="font-display text-xs font-black uppercase tracking-wider text-primary flex items-center gap-1.5">
+            <Sparkles className="size-3.5" />
             Atalhos de Venda Rápida
           </p>
-          <p className="truncate font-display text-base sm:text-lg font-bold text-foreground">
-            Toque para lançar rapidamente no cupom
+          <p className="truncate font-display text-xs sm:text-sm font-semibold text-muted-foreground">
+            Toque no card para lançar no cupom
           </p>
         </div>
-        <span className="num shrink-0 text-xs font-semibold text-muted-foreground">
-          {products.length} produto(s)
+        <span className="num shrink-0 text-xs font-bold text-muted-foreground bg-muted/60 px-2.5 py-0.5 rounded-full border border-border/40">
+          {products.length} atalhos
         </span>
       </div>
 
       <div className="min-h-0 overflow-y-auto p-3.5">
-        <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {visible.map((p) => (
             <button
               key={p.id}
               type="button"
               onClick={() => onAdd(p)}
-              className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 rounded-lg border border-border bg-card p-2.5 text-left transition-all hover:border-primary hover:bg-primary/5 hover:shadow-sm"
+              className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-3 text-left transition-all duration-200 hover:border-primary hover:shadow-md hover:shadow-primary/10 hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
-              <div className="size-12 shrink-0 overflow-hidden rounded-lg border border-border/60 bg-muted/30 shadow-2xs">
+              {/* Product Image on Top (Square container) */}
+              <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-surface p-2 border border-border/40 flex items-center justify-center mb-2.5">
                 <img
                   src={p.imageUrl || productPlaceholder}
                   alt={p.name}
                   aria-hidden
-                  className="size-full object-cover transition-transform duration-200 hover:scale-110"
+                  className="size-full object-contain transition-transform duration-300 group-hover:scale-108"
                   loading="lazy"
                 />
+                {p.soldByWeight && (
+                  <span className="absolute top-1.5 right-1.5 rounded-md bg-warning/90 px-1.5 py-0.5 font-display text-[10px] font-black uppercase text-warning-foreground shadow-2xs">
+                    Kg
+                  </span>
+                )}
               </div>
-              <span className="min-w-0">
-                <span className="block truncate font-display text-sm sm:text-base font-extrabold uppercase leading-tight text-foreground">
-                  {p.name}
-                </span>
-                <span className="block truncate text-xs text-muted-foreground font-medium">
-                  {p.category}
-                </span>
-              </span>
-              <span className="num shrink-0 text-sm sm:text-base font-extrabold text-primary">
-                {brl(p.price)}
-              </span>
+
+              {/* Product Info at Bottom */}
+              <div className="w-full flex-1 flex flex-col justify-between space-y-2">
+                <div>
+                  <h3 className="font-display text-xs sm:text-sm font-extrabold uppercase leading-snug text-foreground line-clamp-2 break-words group-hover:text-primary transition-colors">
+                    {p.name}
+                  </h3>
+                  <p className="text-[11px] font-medium text-muted-foreground truncate mt-0.5">
+                    {p.category}
+                  </p>
+                </div>
+
+                {/* Price and Plus Button Row */}
+                <div className="flex items-center justify-between gap-1 pt-1.5 border-t border-border/40">
+                  <div className="min-w-0">
+                    <span className="num font-display text-sm sm:text-base font-black text-primary">
+                      {brl(p.price)}
+                    </span>
+                    {p.soldByWeight && (
+                      <span className="text-[10px] text-muted-foreground font-semibold ml-0.5">
+                        /kg
+                      </span>
+                    )}
+                  </div>
+
+                  <span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-xs transition-transform duration-200 group-hover:scale-110 group-active:scale-95">
+                    <Plus className="size-4 stroke-[3]" />
+                  </span>
+                </div>
+              </div>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-t border-border px-3.5 py-2.5">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-t border-border px-4 py-2.5 bg-card/60">
         <Button
           type="button"
           variant="outline"
           disabled={page === 1}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
-          className="h-10 shrink-0 gap-1.5 rounded-lg text-xs sm:text-sm font-bold"
+          className="h-9 shrink-0 gap-1.5 rounded-lg text-xs font-bold"
         >
           <ChevronLeft className="size-4" />
           Anterior
         </Button>
         <div className="min-w-0 text-center">
-          <p className="num truncate text-xs sm:text-sm font-bold text-foreground">
+          <p className="num truncate text-xs font-bold text-foreground">
             Página {page} de {pages}
-          </p>
-          <p className="truncate text-xs text-muted-foreground">
-            Use Page Up / Page Down
           </p>
         </div>
         <Button
@@ -95,7 +118,7 @@ export function QuickAddGrid({ onAdd }: { onAdd: (product: Product) => void }) {
           variant="outline"
           disabled={page === pages}
           onClick={() => setPage((p) => Math.min(pages, p + 1))}
-          className="h-10 shrink-0 gap-1.5 rounded-lg text-xs sm:text-sm font-bold"
+          className="h-9 shrink-0 gap-1.5 rounded-lg text-xs font-bold"
         >
           Próxima
           <ChevronRight className="size-4" />
