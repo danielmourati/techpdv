@@ -26,3 +26,9 @@ Trabalho apenas visual/frontend, sem mexer em regras de venda.
 - Arquivos: `src/components/pos/AppTopBar.tsx`, `CurrentProductBar.tsx`, `CouponPanel.tsx`, `AppSidebar.tsx`, `src/routes/index.tsx` (larguras da grade + provider), `src/data/mock-settings.ts` e `src/routes/configuracoes.tsx` (campo do logo).
 - Cores por variante do sidebar via `group-data-[state=collapsed]:` / `group-data-[state=expanded]:` nas classes, sem estado extra em JS.
 - Verificação com Playwright: caixa recolhido e expandido, cupom com item, e troca de paleta em Configurações.
+
+## Correções de tipo pendentes (entram junto)
+
+Erros de TypeScript já existentes no projeto, corrigidos na implementação:
+- `CashShiftModal.tsx` / `useCashShift.tsx`: campos opcionais (`differenceReason`, `adminPassword`, `adminAuthorizedBy`) precisam aceitar `undefined` ou ser omitidos (regra `exactOptionalPropertyTypes`).
+- `src/routes/index.tsx`: acessos a `MOCK_USERS[0]` / `MOCK_USERS[1]` sem verificação de existência.
