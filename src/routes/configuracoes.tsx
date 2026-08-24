@@ -33,11 +33,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import {
-  getStoredSettings,
-  saveStoredSettings,
-  type StoreSettings,
-} from "@/data/mock-settings";
+import type { StoreSettings } from "@/data/mock-settings";
+import { useSettings } from "@/hooks/useSettings";
 import { MOCK_USERS, type AuthUser } from "@/data/mock-auth";
 import { ThemePicker } from "@/components/pos/ThemePicker";
 
