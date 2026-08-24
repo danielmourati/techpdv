@@ -51,10 +51,11 @@ export function AppTopBar({
 
 
         <div className="min-w-0">
-          <h1 className="truncate font-display text-xl font-extrabold leading-tight text-foreground">
+          <h1 className="truncate font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground">
             {title}
           </h1>
-          <p className="truncate text-xs font-medium text-muted-foreground">{storeLabel}</p>
+          <p className="truncate text-sm font-medium text-muted-foreground">{storeLabel}</p>
+
         </div>
 
 
