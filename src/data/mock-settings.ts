@@ -43,7 +43,7 @@ export type StoreSettings = {
   approximateTaxPercentage: number;
 };
 
-const INITIAL_SETTINGS: StoreSettings = {
+export const INITIAL_SETTINGS: StoreSettings = {
   theme: DEFAULT_THEME,
   logoUrl: "",
 
