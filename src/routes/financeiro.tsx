@@ -169,8 +169,9 @@ function FinanceiroPage() {
       id: `fin-${Date.now()}`,
       ...formData,
       createdAt: new Date().toISOString().slice(0, 10),
-      paymentDate:
-        formData.status === "PAGO" ? new Date().toLocaleString("pt-BR") : undefined,
+      ...(formData.status === "PAGO"
+        ? { paymentDate: new Date().toLocaleString("pt-BR") }
+        : {}),
     };
 
     saveStoredFinancial([newEntry, ...entries]);
