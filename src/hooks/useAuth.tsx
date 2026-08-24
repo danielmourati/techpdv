@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const savedId = localStorage.getItem(AUTH_STORAGE_KEY);
     if (!savedId) return null;
     const found = MOCK_USERS.find((u) => u.id === savedId);
-    return found ?? MOCK_USERS[0] ?? null; // default to first user (Admin) or operador
+    return found ?? null;
   });
 
   const [isShiftOpen, setIsShiftOpen] = useState<boolean>(() => {
@@ -52,6 +52,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(AUTH_STORAGE_KEY, user.id);
     } else {
       localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("meupdv_auth_changed"));
     }
   }, [user]);
 
@@ -101,6 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     if (typeof window !== "undefined") {
       localStorage.removeItem(AUTH_STORAGE_KEY);
+      window.dispatchEvent(new Event("meupdv_auth_changed"));
     }
   };
 

@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Boxes,
   ClipboardList,
@@ -14,6 +14,7 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   Sidebar,
   SidebarContent,
@@ -78,6 +79,13 @@ export function AppSidebar() {
   const { saved: settings } = useSettings();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate({ to: "/login" });
+    toast.success("Sessão encerrada com sucesso.");
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-r border-primary/30 bg-primary text-primary-foreground">
@@ -207,7 +215,7 @@ export function AppSidebar() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => logout()}
+              onClick={handleLogout}
               className="flex items-center gap-2 text-destructive cursor-pointer focus:text-destructive"
             >
               <LogOut className="size-4" />

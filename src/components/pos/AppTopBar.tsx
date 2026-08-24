@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Banknote, LogIn, LogOut, ShieldCheck, UserCheck, UserRound, Wallet } from "lucide-react";
+import { toast } from "sonner";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -33,6 +34,13 @@ export function AppTopBar({
   const { saved: settings } = useSettings();
   const storeLabel = store ?? settings.tradeName;
   const [cashModalOpen, setCashModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate({ to: "/login" });
+    toast.success("Sessão encerrada com sucesso.");
+  };
 
   return (
     <>
@@ -158,7 +166,7 @@ export function AppTopBar({
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => logout()}
+                onClick={handleLogout}
                 className="flex items-center gap-2 text-destructive cursor-pointer focus:text-destructive"
               >
                 <LogOut className="size-4" />

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
+  DollarSign,
   Lock,
   LogIn,
   ShieldCheck,
@@ -69,6 +70,7 @@ function HomeLoginPortal() {
   const { login, openingFloat } = useAuth();
   const [selectedUserId, setSelectedUserId] = useState<string>(MOCK_USERS[0].id);
   const [password, setPassword] = useState<string>("");
+  const [cashFloat, setCashFloat] = useState<string>(String(openingFloat || 100));
   const [loading, setLoading] = useState(false);
 
   const selectedUser = MOCK_USERS.find((u) => u.id === selectedUserId) ?? MOCK_USERS[0]!;
@@ -86,7 +88,7 @@ function HomeLoginPortal() {
     setPassword(u.passwordHint);
     setLoading(true);
     setTimeout(() => {
-      login(u.id, u.passwordHint);
+      login(u.id, u.passwordHint, parseFloat(cashFloat.replace(",", ".")) || 100);
       toast.success(`Bem-vindo, ${u.name}! (${u.roleLabel})`);
       setLoading(false);
     }, 250);
@@ -97,7 +99,8 @@ function HomeLoginPortal() {
     setLoading(true);
 
     setTimeout(() => {
-      const success = login(selectedUserId, password || undefined);
+      const floatVal = parseFloat(cashFloat.replace(",", ".")) || 100;
+      const success = login(selectedUserId, password || undefined, floatVal);
       if (success) {
         toast.success(`Autenticado com sucesso como ${selectedUser.name}!`);
       } else {

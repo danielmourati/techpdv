@@ -1,5 +1,4 @@
 import { Banknote, CheckCircle2, Minus, Plus, QrCode, Receipt, Trash2 } from "lucide-react";
-import productPlaceholder from "@/assets/product-placeholder.jpg";
 import type { SaleItem } from "@/data/mock-sales";
 import { brl, qty } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -56,98 +55,108 @@ export function CouponPanel({
         </Button>
       </header>
 
-      <div className="grid grid-cols-[minmax(0,1fr)_6.5rem_4.5rem_5.5rem_2rem] items-center gap-2 border-b border-border px-3.5 py-2 font-display text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted/20">
-        <span>Produto</span>
-        <span className="text-center">Qtd.</span>
-        <span className="text-right">Unit.</span>
-        <span className="text-right">Total</span>
-        <span className="sr-only">Ações</span>
+      <div className="flex items-center justify-between border-b border-border px-3.5 py-2 font-display text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted/20">
+        <span>Itens Lançados ({items.length})</span>
+        <span>Subtotal</span>
       </div>
 
       <ul className="min-h-0 divide-y divide-border overflow-y-auto">
         {items.length === 0 && (
           <li className="px-4 py-12 text-center text-sm font-medium text-muted-foreground">
-            Nenhum item no cupom. Leia um código ou selecione nos atalhos.
+            Nenhum item no cupom. Leia um código de barras ou selecione nos atalhos.
           </li>
         )}
-        {items.map((item) => (
+        {items.map((item, index) => (
           <li
             key={item.id}
             onClick={() => onSelect(item.id)}
             className={cn(
-              "grid cursor-pointer grid-cols-[minmax(0,1fr)_6.5rem_4.5rem_5.5rem_2rem] items-center gap-2 px-3.5 py-2.5 transition-colors",
-              item.id === currentItemId ? "bg-primary/10 border-l-4 border-l-primary" : "hover:bg-muted/30",
+              "cursor-pointer px-3.5 py-3 transition-colors border-l-4",
+              item.id === currentItemId
+                ? "bg-primary/10 border-l-primary"
+                : "border-l-transparent hover:bg-muted/30",
             )}
           >
-            <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5">
-              <img
-                src={productPlaceholder}
-                alt=""
-                aria-hidden
-                className="size-10 shrink-0 rounded-md border border-border/60 object-cover shadow-2xs"
-                loading="lazy"
-              />
-              <div className="min-w-0">
-                <p className="truncate font-display text-sm font-bold uppercase text-foreground leading-tight">
+            {/* Top Line: Item Number + Full Product Name + Total + Remove */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="font-display text-sm sm:text-base font-extrabold uppercase text-foreground leading-snug break-words">
+                  <span className="text-primary mr-1.5 font-black">#{index + 1}</span>
                   {item.name}
                 </p>
-                <p className="num truncate text-xs text-muted-foreground">{item.code}</p>
+                <p className="num text-xs text-muted-foreground font-mono mt-0.5">
+                  Cód: {item.code}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="num font-display text-base sm:text-lg font-black text-primary">
+                  {brl(item.price * item.quantity)}
+                </span>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  aria-label={`Remover ${item.name}`}
+                  className="size-7.5 shrink-0 rounded-md text-destructive hover:bg-destructive/10 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove(item.id);
+                  }}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-1">
-              <Button
-                type="button"
-                size="icon"
-                variant="outline"
-                aria-label={`Diminuir quantidade de ${item.name}`}
-                className="size-7 shrink-0 rounded-md"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onChangeQuantity(item.id, item.unit === "KG" ? -0.1 : -1);
-                }}
-              >
-                <Minus className="size-3.5" />
-              </Button>
-              <span className="num w-13 rounded-md border border-border py-1 text-center text-xs sm:text-sm font-bold bg-card">
-                {qty(item.quantity)}
-                {item.unit === "KG" ? " kg" : ""}
-              </span>
-              <Button
-                type="button"
-                size="icon"
-                variant="outline"
-                aria-label={`Aumentar quantidade de ${item.name}`}
-                className="size-7 shrink-0 rounded-md"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onChangeQuantity(item.id, item.unit === "KG" ? 0.1 : 1);
-                }}
-              >
-                <Plus className="size-3.5" />
-              </Button>
-            </div>
+            {/* Bottom Line: Quantity Controls & Unit Price */}
+            <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-border/40 pt-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                  Qtd:
+                </span>
+                <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    aria-label={`Diminuir quantidade de ${item.name}`}
+                    className="size-7 shrink-0 rounded-md hover:bg-primary/10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onChangeQuantity(item.id, item.unit === "KG" ? -0.1 : -1);
+                    }}
+                  >
+                    <Minus className="size-3.5" />
+                  </Button>
+                  <span className="num min-w-14 rounded-md border border-border px-2 py-0.5 text-center text-xs sm:text-sm font-bold bg-card shadow-2xs">
+                    {qty(item.quantity)}
+                    {item.unit === "KG" ? " kg" : " un"}
+                  </span>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    aria-label={`Aumentar quantidade de ${item.name}`}
+                    className="size-7 shrink-0 rounded-md hover:bg-primary/10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onChangeQuantity(item.id, item.unit === "KG" ? 0.1 : 1);
+                    }}
+                  >
+                    <Plus className="size-3.5" />
+                  </Button>
+                </div>
+              </div>
 
-            <span className="num truncate text-right text-xs sm:text-sm font-semibold text-muted-foreground">
-              {brl(item.price)}
-              {item.unit === "KG" ? "/kg" : ""}
-            </span>
-            <span className="num truncate text-right text-sm sm:text-base font-extrabold text-primary">
-              {brl(item.price * item.quantity)}
-            </span>
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              aria-label={`Remover ${item.name}`}
-              className="size-8 shrink-0 rounded-md text-destructive hover:bg-destructive/10"
-              onClick={(e) => {
-                e.stopPropagation();
-                onRemove(item.id);
-              }}
-            >
-              <Trash2 className="size-4" />
-            </Button>
+              <div className="text-right">
+                <span className="text-xs text-muted-foreground font-medium mr-1.5">Unitário:</span>
+                <span className="num text-xs sm:text-sm font-bold text-foreground">
+                  {brl(item.price)}
+                  {item.unit === "KG" ? "/kg" : "/un"}
+                </span>
+              </div>
+            </div>
           </li>
         ))}
       </ul>
