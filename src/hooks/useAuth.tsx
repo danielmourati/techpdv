@@ -16,10 +16,10 @@ const AUTH_STORAGE_KEY = "meupdv_current_user_id";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => {
-    if (typeof window === "undefined") return MOCK_USERS[0];
+    if (typeof window === "undefined") return MOCK_USERS[0] ?? null;
     const savedId = localStorage.getItem(AUTH_STORAGE_KEY);
     const found = MOCK_USERS.find((u) => u.id === savedId);
-    return found ?? MOCK_USERS[0]; // default to first user (Admin) or operador
+    return found ?? MOCK_USERS[0] ?? null; // default to first user (Admin) or operador
   });
 
   useEffect(() => {

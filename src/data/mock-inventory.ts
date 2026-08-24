@@ -146,7 +146,7 @@ export function registerStockMovement(
     newStock,
     reason: reason.trim() || "Ajuste manual de estoque",
     operator,
-    documentNumber,
+    ...(documentNumber ? { documentNumber } : {}),
     timestamp: new Date().toLocaleString("pt-BR"),
   };
 

@@ -37,15 +37,17 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
+const DEFAULT_USER = MOCK_USERS[0]!;
+
 function LoginPage() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
-  const [selectedUserId, setSelectedUserId] = useState<string>(user?.id ?? MOCK_USERS[0].id);
+  const [selectedUserId, setSelectedUserId] = useState<string>(user?.id ?? DEFAULT_USER.id);
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-  const selectedUser = MOCK_USERS.find((u) => u.id === selectedUserId) ?? MOCK_USERS[0];
+  const selectedUser = MOCK_USERS.find((u) => u.id === selectedUserId) ?? DEFAULT_USER;
 
   const handleSelectUser = (id: string) => {
     setSelectedUserId(id);
@@ -206,7 +208,7 @@ function LoginPage() {
                     variant="outline"
                     size="sm"
                     className="h-auto flex-col items-start gap-1 py-2 text-left"
-                    onClick={() => handleQuickLogin(MOCK_USERS[0])}
+                    onClick={() => handleQuickLogin(DEFAULT_USER)}
                   >
                     <span className="flex items-center gap-1.5 font-display text-xs font-bold text-primary">
                       <ShieldCheck className="size-3.5" />
@@ -220,7 +222,7 @@ function LoginPage() {
                     variant="outline"
                     size="sm"
                     className="h-auto flex-col items-start gap-1 py-2 text-left"
-                    onClick={() => handleQuickLogin(MOCK_USERS[1])}
+                    onClick={() => handleQuickLogin(MOCK_USERS[1] ?? DEFAULT_USER)}
                   >
                     <span className="flex items-center gap-1.5 font-display text-xs font-bold text-emerald-600">
                       <UserCheck className="size-3.5" />
