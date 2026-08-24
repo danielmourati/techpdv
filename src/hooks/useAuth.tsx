@@ -21,11 +21,11 @@ const SHIFT_STORAGE_KEY = "meupdv_shift_status_v1";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => {
-    if (typeof window === "undefined") return MOCK_USERS[0];
+    if (typeof window === "undefined") return null;
     const savedId = localStorage.getItem(AUTH_STORAGE_KEY);
     if (!savedId) return null;
     const found = MOCK_USERS.find((u) => u.id === savedId);
-    return found ?? MOCK_USERS[0]; // default to first user (Admin) or operador
+    return found ?? MOCK_USERS[0] ?? null; // default to first user (Admin) or operador
   });
 
   const [isShiftOpen, setIsShiftOpen] = useState<boolean>(() => {
