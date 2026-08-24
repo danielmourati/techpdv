@@ -44,7 +44,7 @@ export function ProductSidebar({
   const { saved: settings } = useSettings();
 
   return (
-    <aside className="grid min-h-0 grid-rows-[1.05fr_1.3fr_auto] gap-2">
+    <aside className="grid min-h-0 grid-rows-[1fr_1.7fr_auto] gap-2">
       <div className="grid min-h-0 place-items-center overflow-hidden rounded-xl border border-border bg-card p-4 shadow-2xs">
         {settings.logoUrl ? (
           <img
@@ -68,11 +68,9 @@ export function ProductSidebar({
         />
       </div>
 
-
       <div className="grid gap-2">
-        <InfoRow label="Estoque" value={`${stock} ${unit}`} />
         <InfoRow label="Valor Unitário" value={brl(unitValue)} />
-        <InfoRow label="Valor Deste Item" value={brl(itemValue)} />
+        <InfoRow label="Estoque" value={`${stock} ${unit}`} />
 
         <div
           className={`grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 rounded-lg border px-3.5 py-2.5 shadow-2xs ${
