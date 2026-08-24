@@ -101,9 +101,17 @@ export function AppSidebar() {
           to="/"
           className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 px-1 py-0.5 transition-opacity hover:opacity-90"
         >
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white font-display text-base font-black text-primary shadow-md">
-            PD
-          </span>
+          {settings.logoUrl ? (
+            <img
+              src={settings.logoUrl}
+              alt={settings.tradeName || "Logo"}
+              className="size-9 shrink-0 rounded-lg bg-white object-contain p-0.5 shadow-md"
+            />
+          ) : (
+            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white font-display text-base font-black text-primary shadow-md">
+              PD
+            </span>
+          )}
           {!collapsed && (
             <span className="min-w-0">
               <span className="block truncate font-display text-base font-extrabold leading-tight tracking-wide text-white">
