@@ -20,43 +20,40 @@ const AUTH_STORAGE_KEY = "meupdv_current_user_id";
 const SHIFT_STORAGE_KEY = "meupdv_shift_status_v1";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(() => {
-    if (typeof window === "undefined") return null;
-    const savedId = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (!savedId) return null;
-    const found = MOCK_USERS.find((u) => u.id === savedId);
-    return found ?? null;
-  });
-
-  const [isShiftOpen, setIsShiftOpen] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      const raw = localStorage.getItem(SHIFT_STORAGE_KEY);
-      return raw ? !!JSON.parse(raw).isOpen : false;
-    } catch {
-      return false;
-    }
-  });
-  const [openingFloat, setOpeningFloat] = useState<number>(() => {
-    if (typeof window === "undefined") return 0;
-    try {
-      const raw = localStorage.getItem(SHIFT_STORAGE_KEY);
-      return raw ? Number(JSON.parse(raw).openingFloat) || 0 : 0;
-    } catch {
-      return 0;
-    }
-  });
+  // Estado inicial igual no servidor e no cliente para evitar erro de hidratação;
+  // a sessão salva é lida somente depois da montagem.
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [isShiftOpen, setIsShiftOpen] = useState<boolean>(false);
+  const [openingFloat, setOpeningFloat] = useState<number>(0);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    const savedId = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (savedId) {
+      setUser(MOCK_USERS.find((u) => u.id === savedId) ?? null);
+    }
+    try {
+      const raw = localStorage.getItem(SHIFT_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setIsShiftOpen(!!parsed.isOpen);
+        setOpeningFloat(Number(parsed.openingFloat) || 0);
+      }
+    } catch {
+      /* ignora storage inválido */
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     if (user) {
       localStorage.setItem(AUTH_STORAGE_KEY, user.id);
     } else {
       localStorage.removeItem(AUTH_STORAGE_KEY);
     }
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new Event("meupdv_auth_changed"));
-    }
-  }, [user]);
+    window.dispatchEvent(new Event("meupdv_auth_changed"));
+  }, [user, hydrated]);
 
   const persistShift = (open: boolean, floatVal: number) => {
     setIsShiftOpen(open);
