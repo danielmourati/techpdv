@@ -164,7 +164,11 @@ export function ShiftReportModal({
             <X className="size-4" />
             Fechar
           </Button>
-          <Button variant="outline" onClick={() => window.print()} className="gap-1.5 text-xs font-semibold">
+          <Button
+            variant="outline"
+            onClick={() => window.print()}
+            className="gap-1.5 text-xs font-semibold"
+          >
             <Printer className="size-4" />
             Imprimir cupom (resumido)
           </Button>
