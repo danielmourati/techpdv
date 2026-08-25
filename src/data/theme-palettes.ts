@@ -71,6 +71,19 @@ export const THEME_PALETTES: ThemePalette[] = [
       text: "#FFFFFF",
     },
   },
+  {
+    id: "REAL_DOURADA_CLARA",
+    name: "Real Dourada Clara",
+    description:
+      "Versão clara da identidade Real: fundo branco predominante, dourado nobre nas ações e texto escuro. Elegância e legibilidade para o dia a dia.",
+    isDark: false,
+    swatches: {
+      background: "#FFFFFF",
+      surface: "#F8F7F4",
+      action: "#C9A227",
+      text: "#1A1A1C",
+    },
+  },
 ];
 
 export const DEFAULT_THEME: ThemeId = "CLEAN_CORPORATIVA";
