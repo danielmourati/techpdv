@@ -124,7 +124,8 @@ export function CashShiftModal({ open, onOpenChange, initialMode }: CashShiftMod
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <Dialog open={open && mode !== "RECEIPT"} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[92vh] max-w-xl overflow-y-auto p-5 sm:max-w-2xl">
         {/* ========================================================================= */}
         {/* 1. MODO: ABERTURA DE CAIXA */}
