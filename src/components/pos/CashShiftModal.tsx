@@ -58,6 +58,9 @@ export function CashShiftModal({ open, onOpenChange, initialMode }: CashShiftMod
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [closedSummary, setClosedSummary] = useState<CashShift | null>(null);
 
+  const isShiftOpenRef = useRef(isShiftOpen);
+  isShiftOpenRef.current = isShiftOpen;
+
   // Define o modo apenas na abertura do diálogo (não sobrescreve o relatório final)
   useEffect(() => {
     if (open) {
@@ -71,7 +74,7 @@ export function CashShiftModal({ open, onOpenChange, initialMode }: CashShiftMod
       setAdminPassword("");
       setClosedSummary(null);
     }
-  }, [open, isShiftOpen, initialMode]);
+  }, [open, initialMode]);
 
   const parsedCountedCash = parseFloat(countedCashInput.replace(",", ".")) || 0;
   const expectedCash = shiftSales.expectedCashInDrawer;
