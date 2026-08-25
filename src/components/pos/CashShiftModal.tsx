@@ -58,13 +58,13 @@ export function CashShiftModal({ open, onOpenChange, initialMode }: CashShiftMod
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [closedSummary, setClosedSummary] = useState<CashShift | null>(null);
 
-  // Sync mode with current shift state
+  // Define o modo apenas na abertura do diálogo (não sobrescreve o relatório final)
   useEffect(() => {
     if (open) {
       if (initialMode) {
         setMode(initialMode);
       } else {
-        setMode(isShiftOpen ? "CLOSING" : "OPENING");
+        setMode(isShiftOpenRef.current ? "CLOSING" : "OPENING");
       }
       setCountedCashInput("");
       setDifferenceReason("");
