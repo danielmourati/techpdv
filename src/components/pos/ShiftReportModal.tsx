@@ -74,10 +74,7 @@ export function ShiftReportModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className="max-h-[92vh] max-w-md overflow-y-auto p-0 print:max-w-none print:border-0 print:shadow-none"
-      >
+      <DialogContent className="max-h-[92vh] max-w-md overflow-y-auto p-0 print:max-w-none print:border-0 print:shadow-none">
         <div className="flex items-center justify-between border-b border-border px-4 py-3 print:hidden">
           <div className="flex items-center gap-2">
             <span className="grid size-8 place-items-center rounded-lg bg-primary text-primary-foreground">
@@ -92,9 +89,6 @@ export function ShiftReportModal({
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} aria-label="Fechar">
-            <X className="size-4" />
-          </Button>
         </div>
 
         {/* Cupom */}
