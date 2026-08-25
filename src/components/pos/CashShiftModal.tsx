@@ -35,6 +35,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCashShift } from "@/hooks/useCashShift";
 import { brl } from "@/lib/format";
 import { type CashShift } from "@/data/mock-cash-shift";
+import { ShiftReportModal } from "./ShiftReportModal";
 
 interface CashShiftModalProps {
   open: boolean;
