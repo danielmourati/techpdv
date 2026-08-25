@@ -349,6 +349,7 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
   const [weightProduct, setWeightProduct] = useState<Product | null>(null);
   const [suggestedWeight, setSuggestedWeight] = useState<number | null>(null);
   const [products, setProducts] = useState<Product[]>(() => getStoredProducts());
+  const [previewProduct, setPreviewProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     const handleProductsUpdate = () => setProducts(getStoredProducts());
@@ -427,9 +428,16 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [sales]);
 
-  const currentProduct = sales.currentItem
+  const itemProduct = sales.currentItem
     ? products.find((p) => p.id === sales.currentItem?.productId)
     : undefined;
+
+  // Produto em foco na tela: peso pendente > item do cupom > último produto visualizado
+  const focusProduct = weightProduct ?? itemProduct ?? previewProduct ?? null;
+  const focusName = weightProduct?.name ?? sales.currentItem?.name ?? previewProduct?.name;
+  const focusImage = weightProduct?.imageUrl ?? sales.currentItem?.imageUrl ?? itemProduct?.imageUrl ?? previewProduct?.imageUrl;
+  const focusUnitValue =
+    weightProduct?.price ?? sales.currentItem?.price ?? previewProduct?.price ?? 0;
 
   const requestWeight = (product: Product, weight?: number | null) => {
     setSuggestedWeight(weight ?? null);
@@ -497,29 +505,36 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
           <main className="grid min-h-0 flex-1 gap-2 overflow-hidden p-2 lg:grid-cols-[16rem_minmax(0,1fr)_22rem] 2xl:grid-cols-[18rem_minmax(0,1fr)_24rem]">
             <div className="hidden min-h-0 lg:grid">
               <ProductSidebar
-                productName={weightProduct ? weightProduct.name : sales.currentItem?.name}
-                imageUrl={weightProduct ? weightProduct.imageUrl : currentProduct?.imageUrl}
-                stock={weightProduct ? weightProduct.stock : (currentProduct?.stock ?? 0)}
-                unit={weightProduct ? weightProduct.unit : (currentProduct?.unit ?? "UN")}
-                unitValue={weightProduct ? weightProduct.price : (sales.currentItem?.price ?? 0)}
+                productName={focusName}
+                imageUrl={focusImage}
+                stock={focusProduct?.stock ?? sales.currentItem?.stock ?? 0}
+                unit={focusProduct?.unit ?? sales.currentItem?.unit ?? "UN"}
+                unitValue={focusUnitValue}
                 itemValue={
                   weightProduct
                     ? (suggestedWeight ? suggestedWeight * weightProduct.price : weightProduct.price)
-                    : (sales.currentItem ? sales.currentItem.price * sales.currentItem.quantity : 0)
+                    : sales.currentItem
+                      ? sales.currentItem.price * sales.currentItem.quantity
+                      : (previewProduct?.price ?? 0)
                 }
                 status={(sales.active?.items.length ?? 0) > 0 ? "Caixa ocupado" : "Caixa livre"}
               />
             </div>
 
             <div className="grid min-h-0 grid-rows-[auto_auto_minmax(0,1fr)] overflow-hidden rounded-md border border-border bg-card">
-              <CurrentProductBar item={sales.currentItem} />
+              <CurrentProductBar item={sales.currentItem} previewProduct={previewProduct} />
               <ProductSearch
                 ref={searchRef}
                 onAdd={sales.addProduct}
                 onWeightRequest={requestWeight}
+                onPreview={setPreviewProduct}
               />
               <QuickAddGrid
-                onAdd={(p) => (p.soldByWeight ? requestWeight(p) : sales.addProduct(p, 1))}
+                onAdd={(p) => {
+                  setPreviewProduct(p);
+                  if (p.soldByWeight) requestWeight(p);
+                  else sales.addProduct(p, 1);
+                }}
               />
             </div>
 

@@ -75,9 +75,13 @@ export function useSalesSessions() {
               unit: product.unit,
               quantity,
               price,
+              ...(product.imageUrl ? { imageUrl: product.imageUrl } : {}),
+              category: product.category,
+              stock: product.stock,
             },
           ],
         };
+
       });
       setCurrentItemId(targetId);
     },
