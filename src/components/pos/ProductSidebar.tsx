@@ -1,5 +1,6 @@
 import { TriangleAlert } from "lucide-react";
-import productPlaceholder from "@/assets/product-placeholder.jpg";
+import productPlaceholderAsset from "@/assets/produto-sem-foto.png.asset.json";
+const productPlaceholder = productPlaceholderAsset.url;
 import { brl } from "@/lib/format";
 import { useSettings } from "@/hooks/useSettings";
 
