@@ -1,6 +1,8 @@
 import { CheckCircle2, Minus, Plus, Receipt, Trash2 } from "lucide-react";
 import type { SaleItem } from "@/data/mock-sales";
 import emptyCartAsset from "@/assets/cupom-vazio.png.asset.json";
+import productPlaceholderAsset from "@/assets/produto-sem-foto.png.asset.json";
+
 import { brl, qty } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
