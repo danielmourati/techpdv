@@ -55,7 +55,10 @@ export const Route = createFileRoute("/clientes")({
   head: () => ({
     meta: [
       { title: "Cadastro de Clientes — MeuPDV" },
-      { name: "description", content: "Gerenciamento de clientes, limites de crédito e histórico de compras." },
+      {
+        name: "description",
+        content: "Gerenciamento de clientes, limites de crédito e histórico de compras.",
+      },
     ],
   }),
   component: ClientesPage,
@@ -226,7 +229,6 @@ function ClientesPage() {
       }
     >
       <div className="space-y-6">
-
         {/* Filters and Search */}
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-3 md:flex-row md:items-center md:justify-between">
           <div className="relative flex-1">
@@ -537,7 +539,9 @@ function ClientesPage() {
                   <Input
                     id="cust-state"
                     value={formData.state}
-                    onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, state: e.target.value.toUpperCase() })
+                    }
                     placeholder="SP"
                     maxLength={2}
                     className="h-9 text-xs uppercase"

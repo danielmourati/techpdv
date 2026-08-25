@@ -32,18 +32,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import {
-  getStoredSuppliers,
-  saveStoredSuppliers,
-  type Supplier,
-} from "@/data/mock-suppliers";
+import { getStoredSuppliers, saveStoredSuppliers, type Supplier } from "@/data/mock-suppliers";
 import { PRODUCT_CATEGORIES } from "@/data/mock-products";
 
 export const Route = createFileRoute("/fornecedores")({
   head: () => ({
     meta: [
       { title: "Cadastro de Fornecedores — MeuPDV" },
-      { name: "description", content: "Gerenciamento de fornecedores, distribuidores e prazos de entrega." },
+      {
+        name: "description",
+        content: "Gerenciamento de fornecedores, distribuidores e prazos de entrega.",
+      },
     ],
   }),
   component: FornecedoresPage,
@@ -213,7 +212,6 @@ function FornecedoresPage() {
       }
     >
       <div className="space-y-6">
-
         {/* Filters and Search */}
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-3 md:flex-row md:items-center md:justify-between">
           <div className="relative flex-1">
@@ -486,7 +484,9 @@ function FornecedoresPage() {
                   <Input
                     id="sup-state"
                     value={formData.state}
-                    onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, state: e.target.value.toUpperCase() })
+                    }
                     placeholder="SP"
                     maxLength={2}
                     className="h-9 text-xs uppercase"

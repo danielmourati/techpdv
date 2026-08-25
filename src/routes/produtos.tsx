@@ -103,7 +103,10 @@ export const Route = createFileRoute("/produtos")({
   head: () => ({
     meta: [
       { title: "Cadastro de Produtos — MeuPDV" },
-      { name: "description", content: "Cadastro, edição e controle de preços e estoque de produtos." },
+      {
+        name: "description",
+        content: "Cadastro, edição e controle de preços e estoque de produtos.",
+      },
     ],
   }),
   component: ProdutosPage,
@@ -335,7 +338,6 @@ function ProdutosPage() {
       }
     >
       <div className="space-y-6">
-
         {/* Filters and Search */}
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-3 md:flex-row md:items-center md:justify-between">
           <div className="relative flex-1">
@@ -459,7 +461,9 @@ function ProdutosPage() {
                         <td className="px-4 py-3">
                           <div className="font-medium text-foreground">{prod.name}</div>
                           {prod.active === false && (
-                            <span className="text-[10px] text-rose-500 font-semibold">(Inativo)</span>
+                            <span className="text-[10px] text-rose-500 font-semibold">
+                              (Inativo)
+                            </span>
                           )}
                         </td>
                         <td className="px-4 py-3">
@@ -485,13 +489,7 @@ function ProdutosPage() {
                           </Badge>
                         </td>
                         <td className="num px-4 py-3 text-right font-display text-sm font-bold">
-                          <span
-                            className={
-                              isLowStock
-                                ? "text-rose-600"
-                                : "text-foreground"
-                            }
-                          >
+                          <span className={isLowStock ? "text-rose-600" : "text-foreground"}>
                             {prod.stock} {prod.unit}
                           </span>
                           {isLowStock && (
@@ -705,7 +703,10 @@ function ProdutosPage() {
                     className="rounded-md border border-dashed border-border hover:border-primary bg-background/50 p-2.5 text-center cursor-pointer transition-colors"
                   >
                     <p className="text-xs font-medium text-foreground">
-                      Arraste uma foto aqui ou <span className="text-primary font-semibold underline">clique para selecionar</span>
+                      Arraste uma foto aqui ou{" "}
+                      <span className="text-primary font-semibold underline">
+                        clique para selecionar
+                      </span>
                     </p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">
                       Otimização e compressão automática no navegador (máx. 10MB)
@@ -914,8 +915,8 @@ function ProdutosPage() {
             <DialogTitle className="text-rose-600">Excluir Produto</DialogTitle>
             <DialogDescription>
               Tem certeza que deseja excluir o produto{" "}
-              <strong className="text-foreground">{productToDelete?.name}</strong>? Esta ação removerá
-              o item do catálogo.
+              <strong className="text-foreground">{productToDelete?.name}</strong>? Esta ação
+              removerá o item do catálogo.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
