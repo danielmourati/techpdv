@@ -6,7 +6,11 @@ export type SaleItem = {
   unit: string;
   quantity: number;
   price: number;
+  imageUrl?: string;
+  category?: string;
+  stock?: number;
 };
+
 
 export type SaleSession = {
   id: string;
