@@ -53,7 +53,10 @@ export const Route = createFileRoute("/vendas")({
   head: () => ({
     meta: [
       { title: "Histórico de Vendas — MeuPDV" },
-      { name: "description", content: "Consulta e gerenciamento de vendas concluídas e canceladas." },
+      {
+        name: "description",
+        content: "Consulta e gerenciamento de vendas concluídas e canceladas.",
+      },
     ],
   }),
   component: VendasPage,
@@ -162,69 +165,6 @@ function VendasPage() {
       }
     >
       <div className="space-y-6">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Total Faturado
-              </CardTitle>
-              <TrendingUp className="size-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {brl(totalRevenue)}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Vendas concluídas</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Ticket Médio
-              </CardTitle>
-              <ShoppingCart className="size-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {brl(averageTicket)}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Por atendimento</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Qtd. de Vendas
-              </CardTitle>
-              <Layers className="size-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {completedSales.length}
-              </div>
-              <p className="text-[11px] text-muted-foreground">De {totalSalesCount} transações</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Cancelamentos
-              </CardTitle>
-              <Ban className="size-4 text-rose-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-rose-600 sm:text-2xl">
-                {canceledCount}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Vendas estornadas</p>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Filters and Search */}
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-3 md:flex-row md:items-center md:justify-between">
           <div className="relative flex-1">
@@ -307,14 +247,9 @@ function VendasPage() {
                   </tr>
                 ) : (
                   filteredSales.map((sale) => (
-                    <tr
-                      key={sale.id}
-                      className="transition-colors hover:bg-muted/30"
-                    >
+                    <tr key={sale.id} className="transition-colors hover:bg-muted/30">
                       <td className="px-4 py-3">
-                        <span className="font-mono font-bold text-foreground">
-                          {sale.code}
-                        </span>
+                        <span className="font-mono font-bold text-foreground">{sale.code}</span>
                         <span className="block text-[10px] text-muted-foreground">
                           Cupom #{sale.receiptNumber}
                         </span>
@@ -351,7 +286,10 @@ function VendasPage() {
                             Concluída
                           </Badge>
                         ) : (
-                          <Badge variant="destructive" className="bg-rose-500/15 text-rose-600 hover:bg-rose-500/20">
+                          <Badge
+                            variant="destructive"
+                            className="bg-rose-500/15 text-rose-600 hover:bg-rose-500/20"
+                          >
                             Cancelada
                           </Badge>
                         )}
@@ -411,7 +349,8 @@ function VendasPage() {
               )}
             </DialogTitle>
             <DialogDescription>
-              Cupom #{selectedSale?.receiptNumber} emitido em {selectedSale?.date} às {selectedSale?.time}
+              Cupom #{selectedSale?.receiptNumber} emitido em {selectedSale?.date} às{" "}
+              {selectedSale?.time}
             </DialogDescription>
           </DialogHeader>
 
@@ -446,7 +385,9 @@ function VendasPage() {
                 <div className="rounded-lg border border-rose-200 bg-rose-50 p-2.5 text-rose-800 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
                   <p className="font-semibold">Motivo do Cancelamento:</p>
                   <p className="text-[11px]">{selectedSale.cancelReason}</p>
-                  <p className="mt-1 text-[10px] text-rose-600">Cancelada em: {selectedSale.canceledAt}</p>
+                  <p className="mt-1 text-[10px] text-rose-600">
+                    Cancelada em: {selectedSale.canceledAt}
+                  </p>
                 </div>
               )}
 

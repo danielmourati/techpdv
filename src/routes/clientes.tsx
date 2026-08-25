@@ -55,7 +55,10 @@ export const Route = createFileRoute("/clientes")({
   head: () => ({
     meta: [
       { title: "Cadastro de Clientes — MeuPDV" },
-      { name: "description", content: "Gerenciamento de clientes, limites de crédito e histórico de compras." },
+      {
+        name: "description",
+        content: "Gerenciamento de clientes, limites de crédito e histórico de compras.",
+      },
     ],
   }),
   component: ClientesPage,
@@ -226,69 +229,6 @@ function ClientesPage() {
       }
     >
       <div className="space-y-6">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Total de Clientes
-              </CardTitle>
-              <Users className="size-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {totalCustomers}
-              </div>
-              <p className="text-[11px] text-muted-foreground">{activeCustomers} ativos no sistema</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Total a Receber (Fiado)
-              </CardTitle>
-              <DollarSign className="size-4 text-rose-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-rose-600 sm:text-2xl">
-                {brl(totalOutstandingDebt)}
-              </div>
-              <p className="text-[11px] text-muted-foreground">{debtorsCount} clientes em débito</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Pessoa Física (PF)
-              </CardTitle>
-              <User className="size-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {customers.filter((c) => c.type === "PF").length}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Consumidores finais</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Empresas (PJ)
-              </CardTitle>
-              <Building2 className="size-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {customers.filter((c) => c.type === "PJ").length}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Contas corporativas</p>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Filters and Search */}
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-3 md:flex-row md:items-center md:justify-between">
           <div className="relative flex-1">
@@ -599,7 +539,9 @@ function ClientesPage() {
                   <Input
                     id="cust-state"
                     value={formData.state}
-                    onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, state: e.target.value.toUpperCase() })
+                    }
                     placeholder="SP"
                     maxLength={2}
                     className="h-9 text-xs uppercase"
