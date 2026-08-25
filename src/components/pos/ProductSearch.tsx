@@ -1,4 +1,4 @@
-import { forwardRef, useMemo, useState } from "react";
+import { forwardRef, useEffect, useMemo, useState } from "react";
 import { Plus, ScanBarcode, Scale, X } from "lucide-react";
 import { toast } from "sonner";
 import { searchProducts, MOCK_PRODUCTS, getStoredProducts, type Product } from "@/data/mock-products";
@@ -11,6 +11,7 @@ import { KeyHint } from "./KeyHint";
 type Props = {
   onAdd: (product: Product, quantity: number, price?: number) => void;
   onWeightRequest: (product: Product, suggestedWeight?: number | null) => void;
+  onPreview?: (product: Product | null) => void;
 };
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -22,7 +23,7 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 }
 
 export const ProductSearch = forwardRef<HTMLInputElement, Props>(function ProductSearch(
-  { onAdd, onWeightRequest },
+  { onAdd, onWeightRequest, onPreview },
   ref,
 ) {
   const [term, setTerm] = useState("");
@@ -41,6 +42,11 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
   }, [parsed]);
 
   const selected = results[0];
+
+  useEffect(() => {
+    if (parsed.term.length > 0) onPreview?.(selected ?? null);
+  }, [selected, parsed.term, onPreview]);
+
   const effectiveQty = parsed.factor ?? (Number(quantity.replace(",", ".")) || 1);
   const numPrice = price ? Number(price.replace(",", ".")) : selected?.price ?? 0;
 
@@ -51,6 +57,7 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
   };
 
   const commit = (product: Product, overrideQty?: number) => {
+    onPreview?.(product);
     const qtyToAdd = overrideQty ?? effectiveQty;
     if (product.soldByWeight) {
       onWeightRequest(product, parsed.scaleWeight ?? parsed.factor ?? null);
@@ -179,7 +186,12 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
             <li key={p.id}>
               <button
                 type="button"
-                onClick={() => commit(p)}
+                onClick={() => {
+                  onPreview?.(p);
+                  commit(p);
+                }}
+                onMouseEnter={() => onPreview?.(p)}
+                onFocus={() => onPreview?.(p)}
                 className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3.5 py-2.5 text-left hover:bg-accent transition-colors"
               >
                 <span className="min-w-0">
