@@ -2,7 +2,8 @@ export type ThemeId =
   | "DARK_OPERACIONAL"
   | "CLEAN_CORPORATIVA"
   | "ALTO_CONTRASTE"
-  | "REAL_DOURADA";
+  | "REAL_DOURADA"
+  | "REAL_DOURADA_CLARA";
 
 export type ThemePalette = {
   id: ThemeId;
@@ -68,6 +69,19 @@ export const THEME_PALETTES: ThemePalette[] = [
       surface: "#1A1A1C",
       action: "#C9A227",
       text: "#FFFFFF",
+    },
+  },
+  {
+    id: "REAL_DOURADA_CLARA",
+    name: "Real Dourada Clara",
+    description:
+      "Versão clara da identidade Real: fundo branco predominante, dourado nobre nas ações e texto escuro. Elegância e legibilidade para o dia a dia.",
+    isDark: false,
+    swatches: {
+      background: "#FFFFFF",
+      surface: "#F8F7F4",
+      action: "#C9A227",
+      text: "#1A1A1C",
     },
   },
 ];
