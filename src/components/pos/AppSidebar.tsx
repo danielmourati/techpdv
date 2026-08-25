@@ -168,7 +168,7 @@ export function AppSidebar() {
                             collapsed
                               ? `justify-center size-10 px-0 ${
                                   isActive
-                                    ? "bg-primary font-bold text-primary-foreground shadow-sm"
+                                    ? "bg-primary/15 font-bold text-primary ring-1 ring-primary/30"
                                     : "text-muted-foreground hover:bg-accent hover:text-foreground font-medium"
                                 }`
                               : `gap-3 px-3 py-2 ${
@@ -181,9 +181,7 @@ export function AppSidebar() {
                           <item.icon
                             className={`size-5 shrink-0 ${
                               isActive
-                                ? collapsed
-                                  ? "text-primary-foreground"
-                                  : "text-primary"
+                                ? "text-primary"
                                 : collapsed
                                   ? "text-muted-foreground"
                                   : "text-white/80"
