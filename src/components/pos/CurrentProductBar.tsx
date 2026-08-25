@@ -1,6 +1,5 @@
 import type { SaleItem } from "@/data/mock-sales";
 import type { Product } from "@/data/mock-products";
-import productPlaceholderAsset from "@/assets/produto-sem-foto.png.asset.json";
 import { brl, qty } from "@/lib/format";
 
 export function CurrentProductBar({
@@ -11,7 +10,6 @@ export function CurrentProductBar({
   previewProduct?: Product | null;
 }) {
   const name = item?.name ?? previewProduct?.name ?? null;
-  const image = item?.imageUrl ?? previewProduct?.imageUrl ?? productPlaceholderAsset.url;
   const unit = item?.unit ?? previewProduct?.unit ?? "UN";
   const itemTotal = item ? item.price * item.quantity : (previewProduct?.price ?? 0);
 
