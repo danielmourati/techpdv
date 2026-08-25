@@ -553,7 +553,7 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
                 onChangeQuantity={sales.changeQuantity}
                 onRemove={sales.removeItem}
                 onSelect={sales.setCurrentItemId}
-                onClear={sales.clearActive}
+                onClear={handleClear}
                 onFinish={() => setPixOpen(true)}
               />
             </div>
