@@ -57,6 +57,19 @@ export const THEME_PALETTES: ThemePalette[] = [
       text: "#111827",
     },
   },
+  {
+    id: "REAL_DOURADA",
+    name: "Real Dourada",
+    description:
+      "Inspirada no logo: preto profundo, dourado nobre nas ações e detalhes em branco puro. Presença de marca no terminal.",
+    isDark: true,
+    swatches: {
+      background: "#0B0B0C",
+      surface: "#1A1A1C",
+      action: "#C9A227",
+      text: "#FFFFFF",
+    },
+  },
 ];
 
 export const DEFAULT_THEME: ThemeId = "CLEAN_CORPORATIVA";
