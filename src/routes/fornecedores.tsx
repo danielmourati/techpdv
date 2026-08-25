@@ -213,68 +213,6 @@ function FornecedoresPage() {
       }
     >
       <div className="space-y-6">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Total de Fornecedores
-              </CardTitle>
-              <Truck className="size-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {totalSuppliers}
-              </div>
-              <p className="text-[11px] text-muted-foreground">{activeSuppliers} ativos no cadastro</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Prazo Médio de Entrega
-              </CardTitle>
-              <Clock className="size-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-emerald-600 sm:text-2xl">
-                {avgDeliveryDays} dias
-              </div>
-              <p className="text-[11px] text-muted-foreground">Após emissão do pedido</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Fornecedores Ativos
-              </CardTitle>
-              <Building className="size-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-blue-600 sm:text-2xl">
-                {activeSuppliers}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Com pedidos regulares</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Condições Médias
-              </CardTitle>
-              <CreditCard className="size-4 text-amber-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="font-display text-lg font-bold text-foreground sm:text-xl">
-                28 DDL / Boleto
-              </div>
-              <p className="text-[11px] text-muted-foreground">Padrão de faturamento</p>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Filters and Search */}
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-3 md:flex-row md:items-center md:justify-between">

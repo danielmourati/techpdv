@@ -335,68 +335,6 @@ function ProdutosPage() {
       }
     >
       <div className="space-y-6">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Total de Itens
-              </CardTitle>
-              <Package className="size-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {totalProducts}
-              </div>
-              <p className="text-[11px] text-muted-foreground">{activeProducts} produtos ativos</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Valor em Estoque
-              </CardTitle>
-              <DollarSign className="size-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-emerald-600 sm:text-2xl">
-                {brl(totalInventoryValue)}
-              </div>
-              <p className="text-[11px] text-muted-foreground">A preço de venda</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Estoque Baixo
-              </CardTitle>
-              <AlertTriangle className="size-4 text-amber-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-amber-600 sm:text-2xl">
-                {lowStockCount}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Abaixo do mínimo</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Venda por Peso
-              </CardTitle>
-              <Scale className="size-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-blue-600 sm:text-2xl">
-                {products.filter((p) => p.soldByWeight).length}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Integrados com balança</p>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Filters and Search */}
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-3 md:flex-row md:items-center md:justify-between">

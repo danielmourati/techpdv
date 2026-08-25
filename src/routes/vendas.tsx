@@ -162,68 +162,6 @@ function VendasPage() {
       }
     >
       <div className="space-y-6">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Total Faturado
-              </CardTitle>
-              <TrendingUp className="size-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {brl(totalRevenue)}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Vendas concluídas</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Ticket Médio
-              </CardTitle>
-              <ShoppingCart className="size-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {brl(averageTicket)}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Por atendimento</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Qtd. de Vendas
-              </CardTitle>
-              <Layers className="size-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-foreground sm:text-2xl">
-                {completedSales.length}
-              </div>
-              <p className="text-[11px] text-muted-foreground">De {totalSalesCount} transações</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">
-                Cancelamentos
-              </CardTitle>
-              <Ban className="size-4 text-rose-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="num font-display text-xl font-bold text-rose-600 sm:text-2xl">
-                {canceledCount}
-              </div>
-              <p className="text-[11px] text-muted-foreground">Vendas estornadas</p>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Filters and Search */}
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-3 md:flex-row md:items-center md:justify-between">
