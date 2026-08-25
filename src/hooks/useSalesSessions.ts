@@ -6,7 +6,7 @@ let nextNumber = 10;
 
 export function useSalesSessions() {
   const [sessions, setSessions] = useState<SaleSession[]>(MOCK_SESSIONS);
-  const [activeId, setActiveId] = useState<string>(MOCK_SESSIONS[1]?.id ?? "s7");
+  const [activeId, setActiveId] = useState<string>(MOCK_SESSIONS[0]?.id ?? "s1");
   const [currentItemId, setCurrentItemId] = useState<string | null>(
     MOCK_SESSIONS[1]?.items[0]?.id ?? null,
   );
@@ -21,10 +21,12 @@ export function useSalesSessions() {
     [active, currentItemId],
   );
 
+  const effectiveActiveId = active?.id ?? activeId;
+
   const patchActive = useCallback(
     (fn: (s: SaleSession) => SaleSession) =>
-      setSessions((prev) => prev.map((s) => (s.id === activeId ? fn(s) : s))),
-    [activeId],
+      setSessions((prev) => prev.map((s) => (s.id === effectiveActiveId ? fn(s) : s))),
+    [effectiveActiveId],
   );
 
   const selectSession = useCallback((id: string) => {
@@ -50,11 +52,11 @@ export function useSalesSessions() {
   const addProduct = useCallback(
     (product: Product, quantity = 1, priceOverride?: number) => {
       const price = priceOverride ?? product.price;
-      let targetId = "";
+      const existing = active?.items.find((i) => i.productId === product.id && i.price === price);
+      const targetId = existing?.id ?? `${product.id}-${Date.now()}`;
+
       patchActive((s) => {
-        const existing = s.items.find((i) => i.productId === product.id && i.price === price);
         if (existing) {
-          targetId = existing.id;
           return {
             ...s,
             items: s.items.map((i) =>
@@ -62,7 +64,7 @@ export function useSalesSessions() {
             ),
           };
         }
-        targetId = `${product.id}-${Date.now()}`;
+
         return {
           ...s,
           items: [
@@ -81,11 +83,10 @@ export function useSalesSessions() {
             },
           ],
         };
-
       });
       setCurrentItemId(targetId);
     },
-    [patchActive],
+    [active, patchActive],
   );
 
   const changeQuantity = useCallback(
