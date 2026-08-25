@@ -1,4 +1,8 @@
-export type ThemeId = "DARK_OPERACIONAL" | "CLEAN_CORPORATIVA" | "ALTO_CONTRASTE";
+export type ThemeId =
+  | "DARK_OPERACIONAL"
+  | "CLEAN_CORPORATIVA"
+  | "ALTO_CONTRASTE"
+  | "REAL_DOURADA";
 
 export type ThemePalette = {
   id: ThemeId;
