@@ -259,6 +259,37 @@
   --sidebar-ring: oklch(0.705 0.187 47.6);
 }
 
+/* 4. Real Dourada (baseada no logo) */
+[data-theme="REAL_DOURADA"] {
+  --background: oklch(0.155 0.002 285);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.215 0.003 285);
+  --card-foreground: oklch(0.985 0 0);
+  --surface: oklch(0.245 0.004 285);
+  --surface-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.215 0.003 285);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.73 0.13 85.5);
+  --primary-foreground: oklch(0.155 0.002 285);
+  --secondary: oklch(0.29 0.005 285);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.26 0.004 285);
+  --muted-foreground: oklch(0.76 0.012 85);
+  --accent: oklch(0.32 0.03 85);
+  --accent-foreground: oklch(0.93 0.06 85);
+  --border: oklch(0.73 0.13 85.5 / 22%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.73 0.13 85.5);
+  --sidebar: oklch(0.185 0.002 285);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.73 0.13 85.5);
+  --sidebar-primary-foreground: oklch(0.155 0.002 285);
+  --sidebar-accent: oklch(0.29 0.005 285);
+  --sidebar-accent-foreground: oklch(0.93 0.06 85);
+  --sidebar-border: oklch(0.73 0.13 85.5 / 22%);
+  --sidebar-ring: oklch(0.73 0.13 85.5);
+}
+
 
 
 @layer base {

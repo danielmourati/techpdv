@@ -1,4 +1,8 @@
-export type ThemeId = "DARK_OPERACIONAL" | "CLEAN_CORPORATIVA" | "ALTO_CONTRASTE";
+export type ThemeId =
+  | "DARK_OPERACIONAL"
+  | "CLEAN_CORPORATIVA"
+  | "ALTO_CONTRASTE"
+  | "REAL_DOURADA";
 
 export type ThemePalette = {
   id: ThemeId;
@@ -51,6 +55,19 @@ export const THEME_PALETTES: ThemePalette[] = [
       surface: "#F9FAFB",
       action: "#F97316",
       text: "#111827",
+    },
+  },
+  {
+    id: "REAL_DOURADA",
+    name: "Real Dourada",
+    description:
+      "Inspirada no logo: preto profundo, dourado nobre nas ações e detalhes em branco puro. Presença de marca no terminal.",
+    isDark: true,
+    swatches: {
+      background: "#0B0B0C",
+      surface: "#1A1A1C",
+      action: "#C9A227",
+      text: "#FFFFFF",
     },
   },
 ];
