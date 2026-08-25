@@ -159,7 +159,7 @@ export function ShiftReportModal({
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-border px-4 py-3 sm:flex-row sm:justify-end print:hidden">
+        <div className="flex flex-col gap-2 border-t border-border px-4 py-3 sm:flex-row sm:flex-wrap sm:justify-end print:hidden">
           <Button variant="outline" onClick={() => onOpenChange(false)} className="gap-1.5 text-xs">
             <X className="size-4" />
             Fechar
@@ -170,7 +170,7 @@ export function ShiftReportModal({
             className="gap-1.5 text-xs font-semibold"
           >
             <Printer className="size-4" />
-            Imprimir cupom (resumido)
+            Cupom (resumido)
           </Button>
           <Button onClick={handleFullReport} className="gap-1.5 text-xs font-bold">
             <FileText className="size-4" />
