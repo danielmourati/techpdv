@@ -508,7 +508,7 @@ export function CashShiftModal({ open, onOpenChange, initialMode }: CashShiftMod
       {/* 3. MODO: RELATÓRIO / COMPROVANTE DE FECHAMENTO (estilo cupom) */}
       <ShiftReportModal
         open={open && mode === "RECEIPT" && !!closedSummary}
-        onOpenChange={(next) => {
+        onOpenChange={(next: boolean) => {
           if (!next) onOpenChange(false);
         }}
         shift={closedSummary}
