@@ -33,6 +33,17 @@ export const ProductSearch = forwardRef<ProductSearchRef, Props>(function Produc
   ref,
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      setTerm("");
+      setQuantity("1");
+      setPrice("");
+    },
+    focus: () => inputRef.current?.focus(),
+    select: () => inputRef.current?.select(),
+  }));
+
   const [term, setTerm] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [price, setPrice] = useState("");
