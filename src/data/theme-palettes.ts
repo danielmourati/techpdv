@@ -2,7 +2,8 @@ export type ThemeId =
   | "DARK_OPERACIONAL"
   | "CLEAN_CORPORATIVA"
   | "ALTO_CONTRASTE"
-  | "REAL_DOURADA";
+  | "REAL_DOURADA"
+  | "REAL_DOURADA_CLARA";
 
 export type ThemePalette = {
   id: ThemeId;
