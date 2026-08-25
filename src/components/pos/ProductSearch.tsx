@@ -115,7 +115,7 @@ export const ProductSearch = forwardRef<ProductSearchRef, Props>(function Produc
 
       <div className="relative">
         <Input
-          ref={ref}
+          ref={inputRef}
           value={term}
           onChange={(e) => handleInputChange(e.target.value)}
           onKeyDown={(e) => {
