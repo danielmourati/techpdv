@@ -181,9 +181,7 @@ export function AppSidebar() {
                           <item.icon
                             className={`size-5 shrink-0 ${
                               isActive
-                                ? collapsed
-                                  ? "text-primary-foreground"
-                                  : "text-primary"
+                                ? "text-primary"
                                 : collapsed
                                   ? "text-muted-foreground"
                                   : "text-white/80"
