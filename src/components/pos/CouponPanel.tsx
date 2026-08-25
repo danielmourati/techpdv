@@ -71,8 +71,16 @@ export function CouponPanel({
       {/* Optimized Compact Item List */}
       <ul className="min-h-0 divide-y divide-border overflow-y-auto">
         {items.length === 0 && (
-          <li className="px-4 py-10 text-center text-xs font-semibold text-muted-foreground">
-            Nenhum item no cupom. Leia um código com o leitor ou use os atalhos.
+          <li className="grid place-items-center gap-3 px-4 py-8 text-center">
+            <img
+              src={emptyCartAsset.url}
+              alt="Cupom sem itens"
+              className="w-36 max-w-full opacity-90"
+              loading="lazy"
+            />
+            <p className="text-xs font-semibold text-muted-foreground">
+              Nenhum item no cupom. Leia um código com o leitor ou use os atalhos.
+            </p>
           </li>
         )}
         {items.map((item, index) => (
