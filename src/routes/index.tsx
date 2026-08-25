@@ -16,7 +16,7 @@ import { AppSidebar } from "@/components/pos/AppSidebar";
 import { AppTopBar } from "@/components/pos/AppTopBar";
 import { CurrentProductBar } from "@/components/pos/CurrentProductBar";
 import { ProductSidebar } from "@/components/pos/ProductSidebar";
-import { ProductSearch } from "@/components/pos/ProductSearch";
+import { ProductSearch, type ProductSearchRef } from "@/components/pos/ProductSearch";
 import { QuickAddGrid } from "@/components/pos/QuickAddGrid";
 import { CouponPanel } from "@/components/pos/CouponPanel";
 import { PixModal } from "@/components/pos/PixModal";
