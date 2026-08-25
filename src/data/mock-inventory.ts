@@ -17,64 +17,9 @@ export type StockMovement = {
   timestamp: string;
 };
 
-const INITIAL_MOVEMENTS: StockMovement[] = [
-  {
-    id: "mov-1",
-    productId: "p1",
-    productName: "REFRIGERANTE 2L",
-    productCode: "7891000100101",
-    type: "ENTRADA",
-    quantity: 50,
-    previousStock: 12,
-    newStock: 62,
-    reason: "Entrada de mercadoria NF 10452 - Bebidas Paulista",
-    operator: "Administrador Geral",
-    documentNumber: "NF 10452",
-    timestamp: "2026-08-23 09:30:00",
-  },
-  {
-    id: "mov-2",
-    productId: "p3",
-    productName: "ARROZ TIPO 1 5KG",
-    productCode: "7891000100103",
-    type: "ENTRADA",
-    quantity: 100,
-    previousStock: 8,
-    newStock: 108,
-    reason: "Recebimento Santa Tereza Alimentos NF 8901",
-    operator: "Administrador Geral",
-    documentNumber: "NF 8901",
-    timestamp: "2026-08-23 10:15:00",
-  },
-  {
-    id: "mov-3",
-    productId: "w2",
-    productName: "TOMATE ITALIANO KG",
-    productCode: "000002",
-    type: "PERDA",
-    quantity: 2.8,
-    previousStock: 30.0,
-    newStock: 27.2,
-    reason: "Descarte por avaria / maturação excessiva",
-    operator: "Daniel Oliveira",
-    timestamp: "2026-08-23 11:45:00",
-  },
-  {
-    id: "mov-4",
-    productId: "p8",
-    productName: "LEITE INTEGRAL 1L",
-    productCode: "7891000100108",
-    type: "AJUSTE",
-    quantity: 5,
-    previousStock: 255,
-    newStock: 260,
-    reason: "Ajuste de conferência física de prateleira",
-    operator: "Daniel Oliveira",
-    timestamp: "2026-08-23 13:20:00",
-  },
-];
+const INITIAL_MOVEMENTS: StockMovement[] = [];
 
-const STORAGE_KEY = "meupdv_mock_inventory_v1";
+const STORAGE_KEY = "meupdv_inventory_v2";
 
 export function getStoredMovements(): StockMovement[] {
   if (typeof window === "undefined") return INITIAL_MOVEMENTS;

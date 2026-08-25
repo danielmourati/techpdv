@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useSettings } from "@/hooks/useSettings";
-import productPlaceholder from "@/assets/product-placeholder.jpg";
+import productPlaceholderAsset from "@/assets/produto-sem-foto.png.asset.json";
+const productPlaceholder = productPlaceholderAsset.url;
 
 const SCALE_LABELS: Record<string, string> = {
   TOLEDO_PRIX3: "Toledo Prix 3",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, Sparkles } from "lucide-react";
-import productPlaceholder from "@/assets/product-placeholder.jpg";
+import productPlaceholderAsset from "@/assets/produto-sem-foto.png.asset.json";
+const productPlaceholder = productPlaceholderAsset.url;
 import { getStoredProducts, type Product } from "@/data/mock-products";
 import { brl } from "@/lib/format";
 import { Button } from "@/components/ui/button";
