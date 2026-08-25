@@ -290,6 +290,37 @@
   --sidebar-ring: oklch(0.73 0.13 85.5);
 }
 
+/* 5. Real Dourada Clara (fundo branco predominante) */
+[data-theme="REAL_DOURADA_CLARA"] {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.21 0.002 285);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.002 285);
+  --surface: oklch(0.982 0.005 85);
+  --surface-foreground: oklch(0.21 0.002 285);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.002 285);
+  --primary: oklch(0.73 0.13 85.5);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.012 85);
+  --secondary-foreground: oklch(0.21 0.002 285);
+  --muted: oklch(0.96 0.005 85);
+  --muted-foreground: oklch(0.52 0.01 285);
+  --accent: oklch(0.96 0.025 85);
+  --accent-foreground: oklch(0.21 0.002 285);
+  --border: oklch(0.88 0.01 85);
+  --input: oklch(0.88 0.01 85);
+  --ring: oklch(0.73 0.13 85.5);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.21 0.002 285);
+  --sidebar-primary: oklch(0.73 0.13 85.5);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.96 0.012 85);
+  --sidebar-accent-foreground: oklch(0.21 0.002 285);
+  --sidebar-border: oklch(0.88 0.01 85);
+  --sidebar-ring: oklch(0.73 0.13 85.5);
+}
+
 
 
 @layer base {
