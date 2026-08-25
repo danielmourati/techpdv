@@ -16,7 +16,7 @@ import { AppSidebar } from "@/components/pos/AppSidebar";
 import { AppTopBar } from "@/components/pos/AppTopBar";
 import { CurrentProductBar } from "@/components/pos/CurrentProductBar";
 import { ProductSidebar } from "@/components/pos/ProductSidebar";
-import { ProductSearch } from "@/components/pos/ProductSearch";
+import { ProductSearch, type ProductSearchRef } from "@/components/pos/ProductSearch";
 import { QuickAddGrid } from "@/components/pos/QuickAddGrid";
 import { CouponPanel } from "@/components/pos/CouponPanel";
 import { PixModal } from "@/components/pos/PixModal";
@@ -343,7 +343,7 @@ function HomeLoginPortal() {
 // ---------------------------------------------------------------------------
 function FrenteDeCaixa({ user }: { user: AuthUser }) {
   const sales = useSalesSessions();
-  const searchRef = useRef<HTMLInputElement>(null);
+  const searchRef = useRef<ProductSearchRef>(null);
   const [pixOpen, setPixOpen] = useState(false);
   const [nfceOpen, setNfceOpen] = useState(false);
   const [weightProduct, setWeightProduct] = useState<Product | null>(null);
@@ -494,6 +494,13 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
     toast.success(`Venda #${receiptNumber} finalizada com sucesso!`);
   };
 
+  const handleClear = () => {
+    sales.clearActive();
+    setPreviewProduct(null);
+    searchRef.current?.reset();
+    searchRef.current?.focus();
+  };
+
   return (
     <SidebarProvider defaultOpen={false}>
       <div className="flex h-screen max-h-screen w-full overflow-hidden bg-background">
@@ -546,7 +553,7 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
                 onChangeQuantity={sales.changeQuantity}
                 onRemove={sales.removeItem}
                 onSelect={sales.setCurrentItemId}
-                onClear={sales.clearActive}
+                onClear={handleClear}
                 onFinish={() => setPixOpen(true)}
               />
             </div>

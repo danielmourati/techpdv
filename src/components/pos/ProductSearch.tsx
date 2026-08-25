@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useMemo, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Plus, ScanBarcode, Scale, X } from "lucide-react";
 import { toast } from "sonner";
 import { searchProducts, MOCK_PRODUCTS, getStoredProducts, type Product } from "@/data/mock-products";
@@ -14,6 +14,12 @@ type Props = {
   onPreview?: (product: Product | null) => void;
 };
 
+export type ProductSearchRef = {
+  reset: () => void;
+  focus: () => void;
+  select: () => void;
+};
+
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
     <span className="mb-1 block font-display text-xs sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">
@@ -22,10 +28,22 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const ProductSearch = forwardRef<HTMLInputElement, Props>(function ProductSearch(
+export const ProductSearch = forwardRef<ProductSearchRef, Props>(function ProductSearch(
   { onAdd, onWeightRequest, onPreview },
   ref,
 ) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      setTerm("");
+      setQuantity("1");
+      setPrice("");
+    },
+    focus: () => inputRef.current?.focus(),
+    select: () => inputRef.current?.select(),
+  }));
+
   const [term, setTerm] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [price, setPrice] = useState("");
@@ -97,7 +115,7 @@ export const ProductSearch = forwardRef<HTMLInputElement, Props>(function Produc
 
       <div className="relative">
         <Input
-          ref={ref}
+          ref={inputRef}
           value={term}
           onChange={(e) => handleInputChange(e.target.value)}
           onKeyDown={(e) => {
