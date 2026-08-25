@@ -494,6 +494,13 @@ function FrenteDeCaixa({ user }: { user: AuthUser }) {
     toast.success(`Venda #${receiptNumber} finalizada com sucesso!`);
   };
 
+  const handleClear = () => {
+    sales.clearActive();
+    setPreviewProduct(null);
+    searchRef.current?.reset();
+    searchRef.current?.focus();
+  };
+
   return (
     <SidebarProvider defaultOpen={false}>
       <div className="flex h-screen max-h-screen w-full overflow-hidden bg-background">
