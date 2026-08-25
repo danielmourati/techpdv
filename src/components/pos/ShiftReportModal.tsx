@@ -174,7 +174,7 @@ export function ShiftReportModal({
           </Button>
           <Button onClick={handleFullReport} className="gap-1.5 text-xs font-bold">
             <FileText className="size-4" />
-            Relatório completo (A4)
+            Completo (A4)
           </Button>
         </div>
       </DialogContent>
