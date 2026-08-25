@@ -97,12 +97,19 @@ export function CouponPanel({
           >
             {/* Top Line: Number + Name + Subtotal + Remove */}
             <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0 flex-1 flex items-baseline gap-1.5">
+              <div className="min-w-0 flex-1 flex items-center gap-1.5">
                 <span className="text-primary font-black text-xs shrink-0">#{index + 1}</span>
+                <img
+                  src={item.imageUrl || productPlaceholderAsset.url}
+                  alt={item.name}
+                  className="size-8 shrink-0 rounded-md border border-border/60 bg-surface object-contain p-0.5"
+                  loading="lazy"
+                />
                 <span className="font-display text-xs sm:text-[13px] font-extrabold uppercase text-foreground leading-tight truncate">
                   {item.name}
                 </span>
               </div>
+
 
               <div className="flex items-center gap-1.5 shrink-0">
                 <span className="num font-display text-xs sm:text-sm font-black text-primary">
