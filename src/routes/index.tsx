@@ -343,7 +343,7 @@ function HomeLoginPortal() {
 // ---------------------------------------------------------------------------
 function FrenteDeCaixa({ user }: { user: AuthUser }) {
   const sales = useSalesSessions();
-  const searchRef = useRef<HTMLInputElement>(null);
+  const searchRef = useRef<ProductSearchRef>(null);
   const [pixOpen, setPixOpen] = useState(false);
   const [nfceOpen, setNfceOpen] = useState(false);
   const [weightProduct, setWeightProduct] = useState<Product | null>(null);
