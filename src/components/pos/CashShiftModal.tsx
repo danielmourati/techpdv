@@ -500,108 +500,17 @@ export function CashShiftModal({ open, onOpenChange, initialMode }: CashShiftMod
           </form>
         )}
 
-        {/* ========================================================================= */}
-        {/* 3. MODO: COMPROVANTE DE FECHAMENTO */}
-        {/* ========================================================================= */}
-        {mode === "RECEIPT" && closedSummary && (
-          <div className="space-y-4 text-center">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
-              <Receipt className="size-6" />
-            </div>
-
-            <div>
-              <DialogTitle className="font-display text-xl font-bold">
-                Caixa Encerrado com Sucesso!
-              </DialogTitle>
-              <DialogDescription className="text-xs">
-                O turno foi finalizado e os dados foram consolidados no histórico financeiro.
-              </DialogDescription>
-            </div>
-
-            {/* Resumo Impresso */}
-            <div className="rounded-xl border border-border bg-muted/20 p-4 text-left font-mono text-xs space-y-2 shadow-2xs">
-              <div className="flex justify-between border-b border-border pb-2">
-                <span className="font-bold text-foreground">OPERADOR:</span>
-                <span>{closedSummary.operatorName}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>ABERTURA:</span>
-                <span>{new Date(closedSummary.openedAt).toLocaleTimeString("pt-BR")}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>ENCERRAMENTO:</span>
-                <span>{closedSummary.closedAt ? new Date(closedSummary.closedAt).toLocaleTimeString("pt-BR") : "Agora"}</span>
-              </div>
-              <div className="border-t border-dashed border-border my-1" />
-              <div className="flex justify-between">
-                <span>FUNDO INICIAL:</span>
-                <span>{brl(closedSummary.initialFloat)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>VENDAS DINHEIRO:</span>
-                <span>{brl(closedSummary.cashSalesTotal)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>VENDAS PIX:</span>
-                <span>{brl(closedSummary.pixSalesTotal)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>VENDAS CARTÃO:</span>
-                <span>{brl(closedSummary.cardDebitSalesTotal + closedSummary.cardCreditSalesTotal)}</span>
-              </div>
-              <div className="flex justify-between font-bold border-t border-border pt-1">
-                <span>TOTAL VENDAS:</span>
-                <span>{brl(closedSummary.totalSales)}</span>
-              </div>
-              <div className="border-t border-dashed border-border my-1" />
-              <div className="flex justify-between font-bold">
-                <span>SALDO ESPERADO:</span>
-                <span>{brl(closedSummary.expectedCash ?? 0)}</span>
-              </div>
-              <div className="flex justify-between font-bold">
-                <span>VALOR CONTADO:</span>
-                <span>{brl(closedSummary.countedCash ?? 0)}</span>
-              </div>
-              <div className={`flex justify-between font-bold text-sm ${
-                (closedSummary.difference ?? 0) === 0
-                  ? "text-emerald-600"
-                  : (closedSummary.difference ?? 0) < 0
-                  ? "text-rose-600"
-                  : "text-amber-600"
-              }`}>
-                <span>DIFERENÇA:</span>
-                <span>{brl(closedSummary.difference ?? 0)}</span>
-              </div>
-              {closedSummary.differenceReason && (
-                <div className="border-t border-border pt-2 text-[11px] text-muted-foreground">
-                  <p className="font-bold text-foreground">JUSTIFICATIVA:</p>
-                  <p className="italic">{closedSummary.differenceReason}</p>
-                  <p className="text-[10px] text-primary mt-0.5">Autorizado por: {closedSummary.adminAuthorizedBy}</p>
-                </div>
-              )}
-            </div>
-
-            <DialogFooter className="gap-2 sm:gap-0 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => window.print()}
-                className="gap-1.5 text-xs font-semibold"
-              >
-                <Printer className="size-4" />
-                Imprimir Fechamento
-              </Button>
-              <Button
-                type="button"
-                onClick={() => onOpenChange(false)}
-                className="font-bold"
-              >
-                Concluir
-              </Button>
-            </DialogFooter>
-          </div>
-        )}
       </DialogContent>
-    </Dialog>
+      </Dialog>
+
+      {/* 3. MODO: RELATÓRIO / COMPROVANTE DE FECHAMENTO (estilo cupom) */}
+      <ShiftReportModal
+        open={open && mode === "RECEIPT" && !!closedSummary}
+        onOpenChange={(next) => {
+          if (!next) onOpenChange(false);
+        }}
+        shift={closedSummary}
+      />
+    </>
   );
 }
